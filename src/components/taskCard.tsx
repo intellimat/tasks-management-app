@@ -45,7 +45,9 @@ export default function TaskCard({ task, className, badgeClassName }: Props) {
         <p className="p-0">
           Remaining time:
           <span className="ms-3 font-semibold">
-            {getEstimatedTimeHHMM(task.timeEstimation)}
+            {task.timeEstimation
+              ? getEstimatedTimeHHMM(task.timeEstimation)
+              : "N/A"}
           </span>
         </p>
       </CardContent>

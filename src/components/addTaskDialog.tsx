@@ -11,8 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TaskStatus } from "@/types/task";
-import { toast, Toaster } from "sonner";
-
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -31,8 +30,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { createTask } from "@/services/tasks";
 
-const FormSchema = z.object({
+export const TaskFormSchema = z.object({
   title: z.string().nonempty(),
   description: z
     .string()
@@ -40,7 +40,7 @@ const FormSchema = z.object({
       message: "Description must not be longer than 100 characters.",
     })
     .optional(),
-  estimatedTime: z.number().int().positive().min(1).optional(),
+  timeEstimation: z.number().int().positive().min(1).optional(),
   status: z.nativeEnum(TaskStatus).optional(),
 });
 
@@ -50,37 +50,49 @@ interface Props {
   dialogTitle: string;
   dialogDescription?: string;
 }
-
 export default function AddTaskDialog({
   triggerDialogClassName,
   buttonLabel,
   dialogTitle,
 }: Props) {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof TaskFormSchema>>({
+    resolver: zodResolver(TaskFormSchema),
     defaultValues: {
       title: "",
       description: "",
-      estimatedTime: undefined,
+      timeEstimation: undefined,
       status: TaskStatus.Todo,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // call API and submit form
-    toast("Your form was submitted with the following values:", {
-      duration: 5000,
-      dismissible: true,
-      description: (
-        <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof TaskFormSchema>) {
+    try {
+      if (data.timeEstimation) {
+        // convert hours into millis
+        data.timeEstimation = data.timeEstimation * 60 * 60 * 1000;
+      }
+      const createdTask = await createTask(data);
+      toast("Task successfully created!", {
+        duration: 5000,
+        dismissible: true,
+        description: (
+          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(createdTask, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred, task could not be created. ", {
+        duration: 5000,
+        dismissible: true,
+      });
+    }
   }
   return (
     <Dialog>
-      <Toaster />
       <DialogTrigger asChild className={triggerDialogClassName}>
         <Button>{buttonLabel}</Button>
       </DialogTrigger>
@@ -158,7 +170,7 @@ export default function AddTaskDialog({
             />
             <FormField
               control={form.control}
-              name="estimatedTime"
+              name="timeEstimation"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Estimated time (in hours)</FormLabel>
