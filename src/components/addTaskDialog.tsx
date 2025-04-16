@@ -61,7 +61,7 @@ export default function AddTaskDialog({
       title: "",
       description: "",
       timeEstimation: undefined,
-      status: TaskStatus.Todo,
+      status: undefined,
     },
   });
 

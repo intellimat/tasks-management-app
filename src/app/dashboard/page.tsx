@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useShowErrors } from "@/hooks/useShowErrors";
+import { deleteTask } from "@/services/tasks";
 
 export default function DashboardPage() {
   const {
@@ -19,6 +20,13 @@ export default function DashboardPage() {
   useShowErrors(error);
 
   const { inProgressTasks, todoTasks, doneTasks } = useTasks(tasks || []);
+
+  const handleDeleteTask = async (taskId: number) => {
+    await deleteTask(taskId);
+  };
+  const handleEditTask = (taskId: number) => {
+    // navigate to task page
+  };
 
   return (
     <main>
@@ -42,6 +50,8 @@ export default function DashboardPage() {
                 <TaskCard
                   key={task.id}
                   task={task}
+                  onDelete={handleDeleteTask}
+                  onEdit={handleEditTask}
                   className="bg-blue-50 gap-1"
                   badgeClassName="uppercase font-semibold bg-blue-700"
                 />
@@ -60,6 +70,8 @@ export default function DashboardPage() {
                 <TaskCard
                   key={task.id}
                   task={task}
+                  onDelete={handleDeleteTask}
+                  onEdit={handleEditTask}
                   className="bg-gray-100 gap-1"
                   badgeClassName="uppercase font-semibold"
                 />
@@ -78,6 +90,8 @@ export default function DashboardPage() {
                 <TaskCard
                   key={task.id}
                   task={task}
+                  onDelete={handleDeleteTask}
+                  onEdit={handleEditTask}
                   className="bg-green-50 gap-1"
                   badgeClassName="uppercase font-semibold bg-green-700"
                 />

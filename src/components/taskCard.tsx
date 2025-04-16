@@ -15,8 +15,16 @@ interface Props {
   task: Task;
   className?: string;
   badgeClassName?: string;
+  onDelete: (taskId: number) => void;
+  onEdit: (taskId: number) => void;
 }
-export default function TaskCard({ task, className, badgeClassName }: Props) {
+export default function TaskCard({
+  task,
+  className,
+  badgeClassName,
+  onDelete,
+  onEdit,
+}: Props) {
   return (
     <Card className={className}>
       <CardHeader className="flex justify-between">
@@ -26,7 +34,7 @@ export default function TaskCard({ task, className, badgeClassName }: Props) {
             <Ellipsis />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(task.id)}>
               <Link
                 href={`/tasks/${task.id}?mode=edit`}
                 className="flex items-center gap-2"
@@ -34,7 +42,7 @@ export default function TaskCard({ task, className, badgeClassName }: Props) {
                 <Pencil className="text-primary" /> Edit
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(task.id)}>
               <Trash className="stroke-red-800" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

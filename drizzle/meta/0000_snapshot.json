@@ -1,5 +1,5 @@
 {
-  "id": "a381422e-3818-469e-83d3-7860f4cc9394",
+  "id": "7b008f55-d72a-4e05-bb53-763816506428",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -25,7 +25,7 @@
           "type": "task_status",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "description": {
           "name": "description",
@@ -63,8 +63,7 @@
       "values": [
         "in progress",
         "to do",
-        "completed",
-        "not available"
+        "completed"
       ]
     }
   },

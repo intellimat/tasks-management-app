@@ -11,3 +11,10 @@ export async function createTask(data: TaskFormData) {
     body: data,
   });
 }
+
+export async function deleteTask(taskId: number) {
+  return fetcher<Task>("/api/tasks", {
+    method: "DELETE",
+    body: { taskId },
+  });
+}
