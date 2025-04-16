@@ -11,7 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TaskStatus } from "@/types/task";
-// import { Toaster } from "@/components/ui/sonner";
+import { toast, Toaster } from "sonner";
+
 import {
   Form,
   FormControl,
@@ -28,12 +29,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 const FormSchema = z.object({
   title: z.string().nonempty(),
-  description: z.string(),
-  estimatedTime: z.number(),
-  status: z.nativeEnum(TaskStatus),
+  description: z
+    .string()
+    .max(100, {
+      message: "Description must not be longer than 100 characters.",
+    })
+    .optional(),
+  estimatedTime: z.number().int().positive().min(1).optional(),
+  status: z.nativeEnum(TaskStatus).optional(),
 });
 
 interface Props {
@@ -50,33 +58,70 @@ export default function AddTaskDialog({
 }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      estimatedTime: undefined,
+      status: TaskStatus.Todo,
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
+    // call API and submit form
+    toast("Your form was submitted with the following values:", {
+      duration: 5000,
+      dismissible: true,
+      description: (
+        <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
   }
   return (
     <Dialog>
+      <Toaster />
       <DialogTrigger asChild className={triggerDialogClassName}>
         <Button>{buttonLabel}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent
+        className="sm:max-w-[425px]"
+        aria-description="Form for submitting a new task"
+      >
         <DialogHeader>
           <DialogTitle>{dialogTitle}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-2/3 space-y-6"
+            className="w-full space-y-3 flex flex-col"
           >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea className="resize-none" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="status"
@@ -89,7 +134,7 @@ export default function AddTaskDialog({
                   >
                     <FormControl>
                       <SelectTrigger
-                        className="w-fit"
+                        className="w-full"
                         defaultValue={TaskStatus.Todo}
                       >
                         <SelectValue placeholder="Select a status" />
@@ -111,7 +156,33 @@ export default function AddTaskDialog({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <FormField
+              control={form.control}
+              name="estimatedTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estimated time (in hours)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value)
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button className="ml-auto" type="submit">
+              Submit
+            </Button>
           </form>
         </Form>
       </DialogContent>
