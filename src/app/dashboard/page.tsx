@@ -4,7 +4,7 @@ import { Task } from "@/types/task";
 import TaskCard from "@/components/taskCard";
 import AddTaskDialog from "@/components/addTaskDialog";
 import useSWR from "swr";
-
+import { useRouter } from "next/navigation";
 import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useShowErrors } from "@/hooks/useShowErrors";
@@ -16,7 +16,7 @@ export default function DashboardPage() {
     error,
     isLoading,
   } = useSWR<Task[], Error>("/api/tasks", fetcher, { errorRetryCount: 0 });
-
+  const router = useRouter();
   useShowErrors(error);
 
   const { inProgressTasks, todoTasks, doneTasks } = useTasks(tasks || []);
@@ -25,7 +25,7 @@ export default function DashboardPage() {
     await deleteTask(taskId);
   };
   const handleEditTask = (taskId: number) => {
-    // navigate to task page
+    router.push(`/tasks/${taskId}?mode=edit`);
   };
 
   return (

@@ -3,7 +3,6 @@ import { Task } from "@/types/task";
 import { Badge } from "./ui/badge";
 import { getEstimatedTimeHHMM } from "@/lib/utils";
 import { Ellipsis, Pencil, Trash } from "lucide-react";
-import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,12 +34,7 @@ export default function TaskCard({
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => onEdit(task.id)}>
-              <Link
-                href={`/tasks/${task.id}?mode=edit`}
-                className="flex items-center gap-2"
-              >
-                <Pencil className="text-primary" /> Edit
-              </Link>
+              <Pencil className="text-primary" /> Edit
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDelete(task.id)}>
               <Trash className="stroke-red-800" /> Delete

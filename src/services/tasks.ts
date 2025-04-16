@@ -13,8 +13,14 @@ export async function createTask(data: TaskFormData) {
 }
 
 export async function deleteTask(taskId: number) {
-  return fetcher<Task>("/api/tasks", {
+  return fetcher<Task>(`/api/tasks/${taskId}`, {
     method: "DELETE",
-    body: { taskId },
+  });
+}
+
+export async function updateTask(taskId: number, data: TaskFormData) {
+  return fetcher<Task>(`/api/tasks/${taskId}`, {
+    method: "PUT",
+    body: data,
   });
 }
