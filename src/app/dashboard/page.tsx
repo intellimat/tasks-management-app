@@ -6,9 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useShowError } from "@/hooks/useShowError";
 import TaskForm from "@/components/taskForm";
 import { useState } from "react";
+import { Searchbar } from "@/components/searchBar";
 
 export default function DashboardPage() {
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
+  const [searchWord, setSearchWord] = useState("");
 
   const {
     inProgressTasks,
@@ -20,13 +22,14 @@ export default function DashboardPage() {
     handleDeleteTask,
     handleEditTask,
     handleNewTaskSubmission,
-  } = useTasks(setIsAddTaskDialogOpen);
+  } = useTasks(setIsAddTaskDialogOpen, searchWord);
 
   useShowError(error);
 
   return (
     <main>
-      <div className="flex justify-end py-3 md:py-0">
+      <div className="flex justify-end items-center py-3 md:py-1 gap-2">
+        <Searchbar onChange={(e) => setSearchWord(e.target.value)} />
         <CustomDialog
           buttonLabel="Add Task"
           triggerDialogClassName="uppercase"

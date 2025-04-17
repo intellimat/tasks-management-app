@@ -9,7 +9,10 @@ import { toast } from "sonner";
 import useSWR from "swr";
 import { z } from "zod";
 
-export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
+export const useTasks = (
+  setIsAddTaskDialogOpen: (open: boolean) => void,
+  searchWord: string
+) => {
   const router = useRouter();
   const {
     data: tasks,
@@ -26,19 +29,31 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
       const unknownStatusTasks: Task[] = [];
 
       tasks?.forEach((task) => {
-        if (task.status === TaskStatus.InProgress) {
+        if (
+          task.status === TaskStatus.InProgress &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           inProgressTasks.push(task);
-        } else if (task.status === TaskStatus.Todo) {
+        } else if (
+          task.status === TaskStatus.Todo &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           todoTasks.push(task);
-        } else if (task.status === TaskStatus.Completed) {
+        } else if (
+          task.status === TaskStatus.Completed &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           doneTasks.push(task);
-        } else if (!task.status) {
+        } else if (
+          !task.status &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           unknownStatusTasks.push(task);
         }
       });
 
       return { inProgressTasks, todoTasks, doneTasks, unknownStatusTasks };
-    }, [tasks]);
+    }, [tasks, searchWord]);
 
   const handleDeleteTask = async (task: Task) => {
     try {
