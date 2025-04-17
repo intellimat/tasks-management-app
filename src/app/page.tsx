@@ -17,13 +17,27 @@ export default function Home() {
         <Link
           href="/dashboard"
           className={cn(
-            buttonVariants({ variant: "default" }),
+            buttonVariants({ variant: "default", size: "lg" }),
             "flex items-center"
           )}
         >
           <span className="mb-0.5 uppercase">Dashboard</span>
           <ChevronRight />
         </Link>
+        <div className="flex gap-4">
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+          >
+            Sign Up
+          </Link>
+        </div>
       </div>
     </main>
   );

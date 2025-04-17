@@ -9,9 +9,9 @@ export async function GET() {
     const allTasks = await db.select().from(tasks);
     return NextResponse.json(allTasks);
   } catch (error) {
-    console.error("GET /api/tasks error:", error);
+    console.error("GET /api/tasks error: ", error);
     return NextResponse.json(
-      { error: "Failed to fetch tasks" },
+      { error: "Failed to fetch tasks. " },
       { status: 500 }
     );
   }
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid input", details: parsed.error.flatten() },
+        { error: "Invalid input. ", details: parsed.error.flatten() },
         { status: 400 }
       );
     }
@@ -42,7 +42,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newTask);
   } catch (error) {
-    console.error("POST /api/tasks error:", error);
-    return NextResponse.json({ error: "Failed to add task" }, { status: 500 });
+    console.error("POST /api/tasks error: ", error);
+    return NextResponse.json(
+      { error: "Failed to add task. " },
+      { status: 500 }
+    );
   }
 }
