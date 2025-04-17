@@ -5,7 +5,7 @@ import { updateTask } from "@/services/tasks";
 import { TaskSchemaValidator } from "@/types/zod";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Task } from "@/types/task";
@@ -14,6 +14,7 @@ import { getHoursFromMillis, getMillisFromHours } from "@/lib/utils";
 import { useShowError } from "@/hooks/useShowError";
 
 export default function TaskPage() {
+  const router = useRouter();
   const params = useParams();
   const taskId = params?.id;
 
@@ -54,6 +55,7 @@ export default function TaskPage() {
       const parsedTaskId = Number(taskId);
       await updateTask(parsedTaskId, data);
       toast("Task successfully updated!");
+      router.push("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error("An error occurred, selected task could not be updated. ");

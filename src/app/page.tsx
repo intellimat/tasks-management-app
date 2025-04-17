@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="p-3 md:p-6">
       <h1 className="text-center text-3xl font-bold">Task Management App</h1>
-      <div className="md:mx-64 flex flex-col items-center gap-4 m-3 md:mt-6">
+      <div className="md:mx-42 flex flex-col items-center gap-4 m-3 md:mt-6">
         <p className="p-0 text-xl">
           Stay organized with our simple Task Management App. Create, update,
           and track tasks easily from a clean, intuitive dashboard. Sign up
