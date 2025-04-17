@@ -1,18 +1,3 @@
-// export async function fetcher(url: string) {
-//   const res = await fetch(url);
-
-//   if (!res.ok) {
-//     const errorBody = await res.json();
-//     const error = new Error(
-//       errorBody?.error || "An error occurred while fetching the data."
-//     );
-//     throw error;
-//   }
-
-//   return await res.json();
-// }
-
-// utils/fetcher.ts
 type FetcherOptions<TBody = unknown> = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: TBody;

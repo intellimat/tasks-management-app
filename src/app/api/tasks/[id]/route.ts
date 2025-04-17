@@ -3,7 +3,7 @@ import { tasks } from "@/db/schema/tasks";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-import { TaskValidator } from "../route";
+import { TaskSchemaValidator } from "@/types/zod";
 
 const TaskIdValidator = z.number().int().positive();
 
@@ -27,18 +27,18 @@ export async function GET(
       );
     }
 
-    const task = await db
+    const foundTasks = await db
       .select()
       .from(tasks)
       .where(eq(tasks.id, parsedTaskId.data))
       .limit(1);
 
     // If task is not found, return a 404 response
-    if (task.length === 0) {
+    if (foundTasks.length === 0) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    return NextResponse.json(task[0]);
+    return NextResponse.json(foundTasks[0]);
   } catch (error) {
     console.error("GET /api/tasks error:", error);
     return NextResponse.json(
@@ -94,7 +94,7 @@ export async function PUT(
     const body = await req.json();
 
     const parsedTaskId = TaskIdValidator.safeParse(Number(id));
-    const parsedTask = TaskValidator.safeParse(body);
+    const parsedTask = TaskSchemaValidator.safeParse(body);
 
     if (!parsedTaskId.success) {
       return NextResponse.json(

@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { TaskStatus } from "@/types/task"; // your Task enum/type
-import { z } from "zod";
 import { tasks } from "@/db/schema/tasks";
 import { db } from "@/db";
-
-// Zod schema for input validation
-export const TaskValidator = z.object({
-  title: z.string().nonempty(),
-  status: z.nativeEnum(TaskStatus).optional(),
-  description: z
-    .string()
-    .max(100, {
-      message: "Description must not be longer than 100 characters.",
-    })
-    .optional(),
-  timeEstimation: z.number().int().positive().optional(),
-});
+import { TaskSchemaValidator } from "@/types/zod";
 
 // GET /api/tasks — fetch all tasks
 export async function GET() {
@@ -35,7 +21,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const parsed = TaskValidator.safeParse(body);
+    const parsed = TaskSchemaValidator.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(

@@ -43,7 +43,9 @@ export default function TaskCard({
         </DropdownMenu>
       </CardHeader>
       <CardContent>
-        <Badge className={badgeClassName}>{task.status}</Badge>
+        <Badge className={badgeClassName}>
+          {task.status ? task.status : "Unknown status"}
+        </Badge>
         <p className="p-0">
           Remaining time:
           <span className="ms-3 font-semibold">

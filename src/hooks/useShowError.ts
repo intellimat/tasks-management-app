@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-export function useShowErrors(error?: Error | null) {
+export function useShowError(error?: Error | null) {
   const lastMessageRef = useRef<string | null>(null);
 
   useEffect(() => {
