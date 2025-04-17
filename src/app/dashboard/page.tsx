@@ -100,7 +100,7 @@ export default function DashboardPage() {
           triggerDialogClassName="uppercase"
           dialogTitle={"Add Task"}
           open={isAddTaskDialogOpen}
-          onDialogTriggerClick={() => setIsAddTaskDialogOpen(true)}
+          onOpenChange={setIsAddTaskDialogOpen}
         >
           <TaskForm onSubmit={handleNewTaskSubmission} />
         </CustomDialog>
@@ -167,25 +167,31 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Unknown status</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 columns-g gap-4">
-          {isLoading ? (
-            <Skeleton className="w-full h-32 bg-neutral-300" />
-          ) : (
-            unknownStatusTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onDelete={handleDeleteTask}
-                onEdit={handleEditTask}
-                className="bg-amber-100 gap-1"
-                badgeClassName="uppercase font-semibold bg-neutral-500"
-              />
-            ))
-          )}
+      {unknownStatusTasks.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Unknown status</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 columns-g gap-4">
+            {isLoading ? (
+              <>
+                <Skeleton className="w-full h-32 bg-neutral-300" />
+                <Skeleton className="w-full h-32 bg-neutral-300" />
+                <Skeleton className="w-full h-32 bg-neutral-300" />
+              </>
+            ) : (
+              unknownStatusTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDelete={handleDeleteTask}
+                  onEdit={handleEditTask}
+                  className="bg-amber-100 gap-1"
+                  badgeClassName="uppercase font-semibold bg-neutral-500"
+                />
+              ))
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

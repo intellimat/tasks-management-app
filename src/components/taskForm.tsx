@@ -29,14 +29,13 @@ interface Props {
   prefill?: z.infer<typeof TaskSchemaValidator>;
 }
 export default function TaskForm({ onSubmit, prefill }: Props) {
-  console.log(prefill);
   const form = useForm<z.infer<typeof TaskSchemaValidator>>({
     resolver: zodResolver(TaskSchemaValidator),
     defaultValues: {
       title: prefill?.title || "",
       description: prefill?.description || "",
       timeEstimation: prefill?.timeEstimation,
-      status: prefill?.status || TaskStatus.Todo,
+      status: prefill?.status,
     },
   });
 
@@ -80,10 +79,7 @@ export default function TaskForm({ onSubmit, prefill }: Props) {
               <FormLabel className="font-semibold">Status</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger
-                    className="w-full"
-                    defaultValue={TaskStatus.Todo}
-                  >
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
                 </FormControl>

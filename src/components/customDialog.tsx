@@ -15,7 +15,7 @@ interface Props {
   dialogTitle: string;
   dialogContentAriaDescription?: string;
   open?: boolean;
-  onDialogTriggerClick?: () => void;
+  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
 }
 export default function CustomDialog({
@@ -24,16 +24,12 @@ export default function CustomDialog({
   dialogTitle,
   dialogContentAriaDescription = "",
   open,
-  onDialogTriggerClick,
+  onOpenChange,
   children,
 }: Props) {
   return (
-    <Dialog open={open}>
-      <DialogTrigger
-        asChild
-        className={triggerDialogClassName}
-        {...(onDialogTriggerClick ? { onClick: onDialogTriggerClick } : {})}
-      >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild className={triggerDialogClassName}>
         <Button>{buttonLabel}</Button>
       </DialogTrigger>
       <DialogContent
