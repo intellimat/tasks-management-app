@@ -16,7 +16,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="px-6">
-      <Toaster />
+      <Toaster closeButton={true} duration={6000} />
       <Breadcrumb className="my-3">
         <BreadcrumbList>
           <BreadcrumbItem>

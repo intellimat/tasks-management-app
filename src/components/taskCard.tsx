@@ -14,7 +14,7 @@ interface Props {
   task: Task;
   className?: string;
   badgeClassName?: string;
-  onDelete: (taskId: number) => void;
+  onDelete: (task: Task) => void;
   onEdit: (taskId: number) => void;
 }
 export default function TaskCard({
@@ -36,7 +36,7 @@ export default function TaskCard({
             <DropdownMenuItem onClick={() => onEdit(task.id)}>
               <Pencil className="text-primary" /> Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(task.id)}>
+            <DropdownMenuItem onClick={() => onDelete(task)}>
               <Trash className="stroke-red-800" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

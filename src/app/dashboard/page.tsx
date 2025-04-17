@@ -1,96 +1,28 @@
 "use client";
 import { useTasks } from "@/hooks/useTasks";
-import { Task } from "@/types/task";
 import TaskCard from "@/components/taskCard";
 import CustomDialog from "@/components/customDialog";
-import useSWR from "swr";
-import { useRouter } from "next/navigation";
-import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useShowError } from "@/hooks/useShowError";
-import { createTask, deleteTask } from "@/services/tasks";
-import { TaskSchemaValidator } from "@/types/zod";
-import { z } from "zod";
-import { toast } from "sonner";
 import TaskForm from "@/components/taskForm";
 import { useState } from "react";
-import { getMillisFromHours } from "@/lib/utils";
 
 export default function DashboardPage() {
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
-  const router = useRouter();
+
   const {
-    data: tasks,
+    inProgressTasks,
+    todoTasks,
+    doneTasks,
+    unknownStatusTasks,
     error,
     isLoading,
-    mutate,
-  } = useSWR<Task[], Error>("/api/tasks", fetcher, { errorRetryCount: 0 });
+    handleDeleteTask,
+    handleEditTask,
+    handleNewTaskSubmission,
+  } = useTasks(setIsAddTaskDialogOpen);
+
   useShowError(error);
-  const { inProgressTasks, todoTasks, doneTasks, unknownStatusTasks } =
-    useTasks(tasks || []);
-
-  const handleDeleteTask = async (taskId: number) => {
-    try {
-      const { deletedTask } = await deleteTask(taskId);
-      mutate(
-        (currentTasks = []) => currentTasks.filter((_t) => _t.id !== taskId),
-        false
-      );
-      toast("Task successfully deleted!", {
-        duration: 5000,
-        dismissible: true,
-        description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(deletedTask, null, 2)}
-            </code>
-          </pre>
-        ),
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred, task could not be deleted. ", {
-        duration: 5000,
-        dismissible: true,
-      });
-    }
-  };
-  const handleEditTask = (taskId: number) => {
-    router.push(`/tasks/${taskId}`);
-  };
-
-  const handleNewTaskSubmission = async (
-    data: z.infer<typeof TaskSchemaValidator>
-  ) => {
-    try {
-      if (data.timeEstimation) {
-        // Transform hours into milliseconds
-        data.timeEstimation = getMillisFromHours(data.timeEstimation);
-      }
-      const createdTask = await createTask(data);
-      mutate((currentTasks = []) => [...currentTasks, createdTask], false); // Default currentTasks to [] if undefined
-
-      toast("Task successfully created!", {
-        duration: 5000,
-        dismissible: true,
-        description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(createdTask, null, 2)}
-            </code>
-          </pre>
-        ),
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred, task could not be created. ", {
-        duration: 5000,
-        dismissible: true,
-      });
-    } finally {
-      setIsAddTaskDialogOpen(false);
-    }
-  };
 
   return (
     <main>

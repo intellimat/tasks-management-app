@@ -52,24 +52,11 @@ export default function TaskPage() {
         return;
       }
       const parsedTaskId = Number(taskId);
-      const createdTask = await updateTask(parsedTaskId, data);
-      toast("Task successfully updated!", {
-        duration: 5000,
-        dismissible: true,
-        description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(createdTask, null, 2)}
-            </code>
-          </pre>
-        ),
-      });
+      await updateTask(parsedTaskId, data);
+      toast("Task successfully updated!");
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, task could not be updated. ", {
-        duration: 5000,
-        dismissible: true,
-      });
+      toast.error("An error occurred, selected task could not be updated. ");
     }
   };
 
