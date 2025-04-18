@@ -3,19 +3,28 @@
 import UserAuthForm from "@/components/userAuthForm";
 import { userAuthSchemaValidator } from "@/types/zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   async function handleLoginFormSubmission(
     userAuth: z.infer<typeof userAuthSchemaValidator>
   ) {
-    await signIn("credentials", {
+    const response = await signIn("credentials", {
       ...userAuth,
-      redirect: true,
-      callbackUrl: "/dashboard",
+      redirect: false,
     });
 
-    // Optional: handle errors via signIn callback
+    if (response?.ok) {
+      router.push("/dashboard");
+    } else if (response?.status === 401) {
+      toast.error("Error: Wrong credentials. ");
+    } else {
+      toast.error(response?.error);
+    }
   }
 
   return (
@@ -23,6 +32,9 @@ export default function LoginPage() {
       <UserAuthForm
         buttonLabel={"Submit"}
         onSubmit={handleLoginFormSubmission}
+        redirectMessage="No account yet?"
+        redirectButtonLabel={"Sign Up"}
+        redirectUrl={"/signup"}
       />
     </div>
   );

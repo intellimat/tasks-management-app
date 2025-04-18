@@ -1,14 +1,21 @@
+import { getServerSession } from "next-auth";
 import React from "react";
-import { Toaster } from "sonner";
+import authConfig from "../api/auth/[...nextauth]/auth.config";
+import { redirect } from "next/navigation";
 
-export default function SignUpLayout({
+export default async function LoginLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authConfig);
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="p-6">
-      <Toaster closeButton={true} duration={6000} />
       <h1 className="text-3xl font-bold text-center">Login</h1>
       {children}
     </div>

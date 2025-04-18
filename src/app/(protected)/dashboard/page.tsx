@@ -7,7 +7,6 @@ import { useShowError } from "@/hooks/useShowError";
 import TaskForm from "@/components/taskForm";
 import { useState } from "react";
 import { Searchbar } from "@/components/searchBar";
-// import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);

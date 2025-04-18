@@ -5,14 +5,16 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="p-3 md:p-6">
-      <h1 className="text-center text-3xl font-bold">Task Management App</h1>
+    <main className="p-3 md:p-12">
+      <h1 className="text-center text-xl font-bold">
+        Enhance your productivity
+      </h1>
       <div className="md:mx-42 flex flex-col items-center gap-4 m-3 md:mt-6">
         <p className="p-0 text-xl">
-          Stay organized with our simple Task Management App. Create, update,
-          and track tasks easily from a clean, intuitive dashboard. Sign up
-          securely and manage your work anywhere. Perfect for personal goals,
-          school, or team projects—productivity made effortless.
+          Stay organized with our Task Management App. Create, update, and track
+          tasks easily from a clean and intuitive dashboard. Sign up securely
+          and manage your work anywhere.
+          <br /> Perfect for personal goals, school, or work.
         </p>
         <Link
           href="/dashboard"
@@ -24,20 +26,6 @@ export default function Home() {
           <span className="mb-0.5 uppercase">Dashboard</span>
           <ChevronRight />
         </Link>
-        <div className="flex gap-4">
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-          >
-            Sign Up
-          </Link>
-        </div>
       </div>
     </main>
   );

@@ -7,16 +7,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Toaster } from "sonner";
 
-export default function TaskLayout({
+export default async function TaskLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <div className="px-6">
-      <Toaster closeButton={true} duration={6000} />
       <Breadcrumb className="my-3">
         <BreadcrumbList>
           <BreadcrumbItem>

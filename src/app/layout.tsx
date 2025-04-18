@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import Navbar from "@/components/navbar";
+import { Toaster } from "sonner";
 import { getServerSession } from "next-auth";
 import authConfig from "./api/auth/[...nextauth]/auth.config";
-import "./globals.css";
 import Providers from "./providers";
 
 const geistSans = Geist({
@@ -31,7 +33,11 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers session={session}>{children}</Providers>
+        <Providers session={session}>
+          <Navbar title="Task Management App" />
+          <Toaster closeButton={true} duration={6000} />
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -27,6 +27,9 @@ export default function SignupPage() {
         <UserAuthForm
           buttonLabel={"Submit"}
           onSubmit={handleSignUpFormSubmission}
+          redirectMessage="Already have an account?"
+          redirectButtonLabel={"Login"}
+          redirectUrl={"/login"}
         />
       </div>
     </main>
