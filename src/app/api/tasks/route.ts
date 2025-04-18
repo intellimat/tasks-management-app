@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { tasks } from "@/db/schema/tasks";
 import { db } from "@/db";
 import { TaskSchemaValidator } from "@/types/zod";
+import { getServerSession } from "next-auth";
+import authConfig from "../auth/[...nextauth]/auth.config";
 
 // GET /api/tasks — fetch all tasks
 export async function GET() {
@@ -20,6 +22,10 @@ export async function GET() {
 // POST /api/tasks — create a new task
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authConfig);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
     const parsed = TaskSchemaValidator.safeParse(body);
 
@@ -37,6 +43,7 @@ export async function POST(req: NextRequest) {
         status: parsed.data.status,
         description: parsed.data.description,
         timeEstimation: parsed.data.timeEstimation,
+        authorId: Number(session.user.id),
       })
       .returning();
 

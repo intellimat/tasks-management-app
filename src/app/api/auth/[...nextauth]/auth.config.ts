@@ -1,11 +1,16 @@
-// app/api/auth/[...nextauth]/authConfig.ts
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema/users";
+import { NextAuthOptions, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
-const authConfig = {
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET missing in your .env file!");
+}
+
+const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -34,14 +39,22 @@ const authConfig = {
         if (!valid) return null;
 
         return {
-          id: user.id,
+          id: user.id.toString(),
           email: user.email,
         };
       },
     }),
   ],
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt",
+  },
+  callbacks: {
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (token && session.user) {
+        session.user.id = token.sub; // Add user ID to session from JWT
+      }
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

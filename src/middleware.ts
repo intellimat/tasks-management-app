@@ -7,6 +7,6 @@ export const config = {
       - static files (_next, etc)
       - public routes: '/', '/login', '/signup'
     */
-    "/((?!_next/static|_next/image|favicon.ico|login|signup|$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|login|signup|api/signup|$).*)",
   ],
 };
