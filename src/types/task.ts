@@ -12,7 +12,6 @@ interface Author {
 
 export interface Task {
   id: number;
-  authorId: number;
   author: Author | null;
   title: string;
   status?: TaskStatus;

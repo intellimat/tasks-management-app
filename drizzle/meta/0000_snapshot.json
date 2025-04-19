@@ -1,5 +1,5 @@
 {
-  "id": "5ec2cf84-128b-4cfa-bc60-bdef6b4ae1c3",
+  "id": "a195dd42-8792-46c7-a3d8-f19c1454e11a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -113,59 +113,6 @@
           "tableTo": "users",
           "columnsFrom": [
             "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.task_status_log": {
-      "name": "task_status_log",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "task_id": {
-          "name": "task_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "task_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "changed_at": {
-          "name": "changed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "task_status_log_task_id_tasks_id_fk": {
-          "name": "task_status_log_task_id_tasks_id_fk",
-          "tableFrom": "task_status_log",
-          "tableTo": "tasks",
-          "columnsFrom": [
-            "task_id"
           ],
           "columnsTo": [
             "id"
