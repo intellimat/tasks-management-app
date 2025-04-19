@@ -4,9 +4,16 @@ export enum TaskStatus {
   Completed = "completed",
 }
 
+interface Author {
+  id: number;
+  name?: string | null;
+  email: string;
+}
+
 export interface Task {
   id: number;
   authorId: number;
+  author: Author | null;
   title: string;
   status?: TaskStatus;
   description?: string;

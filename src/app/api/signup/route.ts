@@ -1,21 +1,14 @@
-import { db } from "@/db";
-import { users } from "@/db/schema/users";
+import { _fetchUserByEmail, insertUser } from "@/db/dao/users";
 import { hash } from "bcryptjs";
-import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
-  console.log(email);
   // TODO: validate input with zod
-  const foundUsers = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-  const existingUser = foundUsers[0];
 
-  if (existingUser) {
+  const fetchedUserFromDB = await _fetchUserByEmail(email);
+  if (fetchedUserFromDB !== null) {
+    // user already exists!
     return NextResponse.json(
       { error: "Email already in use. " },
       { status: 400 }
@@ -23,10 +16,8 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hash(password, 10);
-  await db.insert(users).values({
-    email,
-    passwordHash,
-  });
+
+  await insertUser({ email, passwordHash });
 
   return NextResponse.json({ email }, { status: 201 });
 }

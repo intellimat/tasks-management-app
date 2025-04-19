@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tasks } from "@/db/schema/tasks";
-import { db } from "@/db";
 import { TaskSchemaValidator } from "@/types/zod";
 import { getServerSession } from "next-auth";
 import authConfig from "../auth/[...nextauth]/auth.config";
+import { fetchTasks, insertTask } from "@/db/dao/tasks";
 
 // GET /api/tasks — fetch all tasks
 export async function GET() {
   try {
-    const allTasks = await db.select().from(tasks);
-    return NextResponse.json(allTasks);
+    const fetchedTasksFromDB = await fetchTasks();
+    return NextResponse.json(fetchedTasksFromDB);
   } catch (error) {
     console.error("GET /api/tasks error: ", error);
     return NextResponse.json(
@@ -23,7 +22,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authConfig);
-    if (!session) {
+    if (!session || !session.user.email || !session.user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
@@ -36,18 +35,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [newTask] = await db
-      .insert(tasks)
-      .values({
-        title: parsed.data.title,
-        status: parsed.data.status,
-        description: parsed.data.description,
-        timeEstimation: parsed.data.timeEstimation,
-        authorId: Number(session.user.id),
-      })
-      .returning();
+    const insertedTask = await insertTask(parsed.data, {
+      email: session.user.email,
+      userId: Number(session.user.id),
+    });
 
-    return NextResponse.json(newTask);
+    return NextResponse.json(insertedTask);
   } catch (error) {
     console.error("POST /api/tasks error: ", error);
     return NextResponse.json(

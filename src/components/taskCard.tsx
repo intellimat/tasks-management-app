@@ -1,4 +1,10 @@
-import { Card, CardTitle, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardTitle,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from "@/components/ui/card";
 import { Task } from "@/types/task";
 import { Badge } from "./ui/badge";
 import { getEstimatedTimeHHMM } from "@/lib/utils";
@@ -47,7 +53,7 @@ export default function TaskCard({
           {task.status ? task.status : "Unknown status"}
         </Badge>
         <p className="p-0">
-          Remaining time:
+          Estim. time:
           <span className="ms-3 font-semibold">
             {task.timeEstimation
               ? getEstimatedTimeHHMM(task.timeEstimation)
@@ -55,6 +61,12 @@ export default function TaskCard({
           </span>
         </p>
       </CardContent>
+      <CardFooter>
+        Author:
+        <span className="font-semibold ms-3">
+          {task.author?.name || task.author?.email || "Author N/A"}
+        </span>
+      </CardFooter>
     </Card>
   );
 }
