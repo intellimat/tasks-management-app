@@ -1,11 +1,16 @@
 import { fetcher } from "@/lib/fetcher";
-import { deleteComment } from "@/services/comments";
+import { deleteComment, updateComment } from "@/services/comments";
 import { Comment } from "@/types/comments";
+import { commentSchemaValidator } from "@/types/zod";
 import { ParamValue } from "next/dist/server/request/params";
+import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-const useComments = (taskId?: ParamValue) => {
+const useComments = (
+  setEditingId: Dispatch<SetStateAction<number | null>>,
+  taskId?: ParamValue
+) => {
   const {
     data: comments,
     error: commentsError,
@@ -19,7 +24,20 @@ const useComments = (taskId?: ParamValue) => {
     }
   );
 
-  const handleEditComment = () => {};
+  const handleEditComment = async (comment: Comment) => {
+    const commentData = commentSchemaValidator.parse(comment); // strip extra properties
+    try {
+      await updateComment(comment.id, commentData);
+      setEditingId(null);
+      toast("Comment successfully updated!");
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred, selected comment could not be updated. ");
+    }
+    mutate();
+    // call API
+    // mutate
+  };
 
   const handleNewCommentSubmission = () => {};
 

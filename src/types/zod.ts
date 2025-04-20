@@ -21,5 +21,5 @@ export const userAuthSchemaValidator = z.object({
 export const idValidator = z.number().int().positive();
 
 export const commentSchemaValidator = z.object({
-  content: z.string().length(500),
+  content: z.string().max(500),
 });

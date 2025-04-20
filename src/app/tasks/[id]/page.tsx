@@ -9,29 +9,45 @@ import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Task } from "@/types/task";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useShowError } from "@/hooks/useShowError";
 import CommentCard from "@/components/commentCard";
 import { Button } from "@/components/ui/button";
 import useComments from "@/hooks/useComments";
 import { getHoursFromMillis, getMillisFromHours } from "@/lib/datetime";
+import { Comment } from "@/types/comments";
 
 export default function TaskPage() {
   const router = useRouter();
   const params = useParams();
   const taskId = params?.id;
 
+  const [isAddingComment, setIsAddingComment] = useState(false);
+  const [editedContent, setEditedContent] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+
   const {
     data: task,
-    error,
-    isLoading,
+    error: taskError,
+    isLoading: isTaskLoading,
   } = useSWR<Task, Error>(taskId ? `/api/tasks/${taskId}` : null, fetcher, {
     errorRetryCount: 0,
   });
 
-  const { comments, handleDeleteComment } = useComments(taskId);
+  const {
+    comments,
+    commentsError,
+    areCommentsLoading,
+    handleDeleteComment,
+    handleEditComment,
+  } = useComments(setEditingId, taskId);
 
-  useShowError(error);
+  useShowError([taskError, commentsError]);
+
+  const handleCommentEditButtonClick = (comment: Comment) => {
+    setEditingId(comment.id);
+    setEditedContent(comment.content);
+  };
 
   const parsedTask = useMemo(() => {
     if (!task) {
@@ -69,9 +85,9 @@ export default function TaskPage() {
 
   return (
     <main>
-      {isLoading ? (
+      {isTaskLoading ? (
         <p className="text-xl mt-4">Loading current task...</p>
-      ) : error ? (
+      ) : taskError ? (
         <p className="text-xl mt-4 text-red-800">
           Error: The task with id:{" "}
           <span className="font-semibold">{taskId}</span> could not be
@@ -88,18 +104,33 @@ export default function TaskPage() {
           <div className="w-full pt-2 pb-4">
             <div className="flex justify-between mb-2">
               <h2 className="font-semibold text-xl">Comments</h2>
-              <Button variant={"outline"} size={"sm"}>
+              <Button
+                variant={"outline"}
+                size={"sm"}
+                onClick={() => setIsAddingComment(true)}
+              >
                 Add
               </Button>
             </div>
-            {comments?.map((comment) => (
-              <CommentCard
-                key={`${taskId}-${comment.id}`}
-                onEdit={() => {}}
-                onDelete={handleDeleteComment}
-                comment={comment}
-              />
-            ))}
+            {areCommentsLoading ? (
+              <p> Loading comments... </p>
+            ) : (
+              comments?.map((comment) => (
+                <CommentCard
+                  key={`${taskId}-${comment.id}`}
+                  comment={comment}
+                  editedContent={editedContent}
+                  setEditedContent={setEditedContent}
+                  isEditing={editingId === comment.id}
+                  onEditButtonClick={() =>
+                    handleCommentEditButtonClick(comment)
+                  }
+                  onDelete={() => handleDeleteComment(comment)}
+                  onCancelEditing={() => setEditingId(null)}
+                  onSave={handleEditComment}
+                />
+              ))
+            )}
           </div>
         </div>
       )}
