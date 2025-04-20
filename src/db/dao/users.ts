@@ -1,9 +1,8 @@
-import { StringChunk } from "drizzle-orm";
 import { db } from "..";
 import { users } from "../schema/users";
 import { eq } from "drizzle-orm";
 
-export async function _fetchUserByEmail(email: StringChunk) {
+export async function _fetchUserByEmail(email: string) {
   const foundUsers = await db
     .select()
     .from(users)

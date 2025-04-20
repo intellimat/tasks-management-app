@@ -1,5 +1,5 @@
 "use client";
-import { useTasks } from "@/hooks/useTasks";
+import useTasks from "@/hooks/useTasks";
 import TaskCard from "@/components/taskCard";
 import CustomDialog from "@/components/customDialog";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,6 +47,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4 ">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : inProgressTasks.length === 0 ? (
+              <p>No Tasks in progress</p>
             ) : (
               inProgressTasks.map((task) => (
                 <TaskCard
@@ -67,6 +69,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : todoTasks.length === 0 ? (
+              <p>No to do tasks</p>
             ) : (
               todoTasks.map((task) => (
                 <TaskCard
@@ -87,6 +91,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : doneTasks.length == 0 ? (
+              <p>No done tasks</p>
             ) : (
               doneTasks.map((task) => (
                 <TaskCard

@@ -1,5 +1,5 @@
+import { getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
-import { getMillisFromHours } from "@/lib/utils";
 import { createTask, deleteTask } from "@/services/tasks";
 import { Task, TaskStatus } from "@/types/task";
 import { TaskSchemaValidator } from "@/types/zod";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import useSWR from "swr";
 import { z } from "zod";
 
-export const useTasks = (
+const useTasks = (
   setIsAddTaskDialogOpen: (open: boolean) => void,
   searchWord: string
 ) => {
@@ -105,3 +105,5 @@ export const useTasks = (
     handleNewTaskSubmission,
   };
 };
+
+export default useTasks;

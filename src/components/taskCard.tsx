@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card";
 import { Task } from "@/types/task";
 import { Badge } from "./ui/badge";
-import { getEstimatedTimeHHMM } from "@/lib/utils";
 import { Ellipsis, Pencil, Trash } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getEstimatedTimeHHMM } from "@/lib/datetime";
 
 interface Props {
   task: Task;

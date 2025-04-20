@@ -10,8 +10,11 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Task } from "@/types/task";
 import { useMemo } from "react";
-import { getHoursFromMillis, getMillisFromHours } from "@/lib/utils";
 import { useShowError } from "@/hooks/useShowError";
+import CommentCard from "@/components/commentCard";
+import { Button } from "@/components/ui/button";
+import useComments from "@/hooks/useComments";
+import { getHoursFromMillis, getMillisFromHours } from "@/lib/datetime";
 
 export default function TaskPage() {
   const router = useRouter();
@@ -25,6 +28,8 @@ export default function TaskPage() {
   } = useSWR<Task, Error>(taskId ? `/api/tasks/${taskId}` : null, fetcher, {
     errorRetryCount: 0,
   });
+
+  const { comments, handleDeleteComment } = useComments(taskId);
 
   useShowError(error);
 
@@ -73,11 +78,29 @@ export default function TaskPage() {
           retrieved.
         </p>
       ) : (
-        <div className="w-full md:w-2xl mt-4 md:mx-auto">
-          <TaskForm
-            onSubmit={handleUpdateTaskSubmission}
-            prefill={parsedTask}
-          />
+        <div className="flex flex-col md:flex-row md:gap-12">
+          <div className="w-full mt-4">
+            <TaskForm
+              onSubmit={handleUpdateTaskSubmission}
+              prefill={parsedTask}
+            />
+          </div>
+          <div className="w-full pt-2 pb-4">
+            <div className="flex justify-between mb-2">
+              <h2 className="font-semibold text-xl">Comments</h2>
+              <Button variant={"outline"} size={"sm"}>
+                Add
+              </Button>
+            </div>
+            {comments?.map((comment) => (
+              <CommentCard
+                key={`${taskId}-${comment.id}`}
+                onEdit={() => {}}
+                onDelete={handleDeleteComment}
+                comment={comment}
+              />
+            ))}
+          </div>
         </div>
       )}
     </main>

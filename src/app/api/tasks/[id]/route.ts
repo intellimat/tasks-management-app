@@ -1,9 +1,6 @@
-import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-import { TaskSchemaValidator } from "@/types/zod";
+import { idValidator, TaskSchemaValidator } from "@/types/zod";
 import { deleteTask, fetchTaskById, updateTask } from "@/db/dao/tasks";
-
-const TaskIdValidator = z.number().int().positive();
 
 // GET /api/tasks/:taskId - get a task
 export async function GET(
@@ -13,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
+    const parsedTaskId = idValidator.safeParse(Number(id));
 
     if (!parsedTaskId.success) {
       return NextResponse.json(
@@ -50,7 +47,7 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
+    const parsedTaskId = idValidator.safeParse(Number(id));
 
     if (!parsedTaskId.success) {
       return NextResponse.json(
@@ -84,7 +81,7 @@ export async function PUT(
     const { id } = await params;
     const body = await req.json();
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
+    const parsedTaskId = idValidator.safeParse(Number(id));
     const parsedTask = TaskSchemaValidator.safeParse(body);
 
     if (!parsedTaskId.success) {

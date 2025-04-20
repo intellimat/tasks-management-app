@@ -1,5 +1,5 @@
 {
-  "id": "a195dd42-8792-46c7-a3d8-f19c1454e11a",
+  "id": "3e8ddda3-7e04-48d4-b2a1-d6171ab92d92",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -12,6 +12,12 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
+          "notNull": true
+        },
+        "task_id": {
+          "name": "task_id",
+          "type": "serial",
+          "primaryKey": false,
           "notNull": true
         },
         "author_id": {
@@ -36,6 +42,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "comments_task_id_tasks_id_fk": {
+          "name": "comments_task_id_tasks_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "tasks",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
         "comments_author_id_users_id_fk": {
           "name": "comments_author_id_users_id_fk",
           "tableFrom": "comments",

@@ -45,23 +45,25 @@ export default function TaskForm({ onSubmit, prefill }: Props) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full space-y-3 flex flex-col"
       >
-        <FormField
-          disabled={true}
-          name="author"
-          render={() => (
-            <FormItem>
-              <FormLabel className="font-semibold">Author</FormLabel>
-              <FormControl>
-                <Input
-                  disabled={true}
-                  readOnly={true}
-                  value={prefill?.author?.name || prefill?.author?.email}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {prefill?.author && (
+          <FormField
+            disabled={true}
+            name="author"
+            render={() => (
+              <FormItem>
+                <FormLabel className="font-semibold">Author</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={true}
+                    readOnly={true}
+                    value={prefill?.author?.name || prefill?.author?.email}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="title"
