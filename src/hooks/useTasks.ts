@@ -62,7 +62,7 @@ const useTasks = (
         (currentTasks = []) => currentTasks.filter((_t) => _t.id !== task.id),
         false
       );
-      toast(`Task ${deletedTask.title} was successfully deleted!`);
+      toast.success(`Task ${deletedTask.title} was successfully deleted!`);
     } catch (error) {
       console.error(error);
       toast.error("An error occurred, your task could not be deleted.");
@@ -84,7 +84,7 @@ const useTasks = (
       const createdTask = await createTask(data);
       mutate((currentTasks = []) => [...currentTasks, createdTask], false); // Default currentTasks to [] if undefined
 
-      toast(`Task ${createdTask.title} was successfully created!`);
+      toast.success(`Task ${createdTask.title} was successfully created!`);
     } catch (error) {
       console.error(error);
       toast.error("An error occurred, your task could not be created. ");

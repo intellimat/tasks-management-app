@@ -18,3 +18,12 @@ export async function updateComment(
     body: commentData,
   });
 }
+export async function postComment(
+  taskId: number,
+  commentData: z.infer<typeof commentSchemaValidator>
+) {
+  return fetcher<{ updatedComment: Comment }>(`/api/tasks/${taskId}/comments`, {
+    method: "POST",
+    body: commentData,
+  });
+}

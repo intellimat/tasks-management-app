@@ -13,7 +13,7 @@ export default function SignupPage() {
   ) => {
     try {
       const { email } = await signupNewUser(userAuth.email, userAuth.password);
-      toast(`User ${email} added successfully!`);
+      toast.success(`User ${email} added successfully!`);
       router.push("/login");
     } catch (error) {
       console.error(error);

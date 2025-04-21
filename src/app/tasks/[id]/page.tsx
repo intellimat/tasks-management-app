@@ -2,7 +2,7 @@
 
 import TaskForm from "@/components/taskForm";
 import { updateTask } from "@/services/tasks";
-import { TaskSchemaValidator } from "@/types/zod";
+import { commentSchemaValidator, TaskSchemaValidator } from "@/types/zod";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useParams, useRouter } from "next/navigation";
@@ -40,6 +40,7 @@ export default function TaskPage() {
     areCommentsLoading,
     handleDeleteComment,
     handleEditComment,
+    handleNewCommentSubmission,
   } = useComments(setEditingId, taskId);
 
   useShowError([taskError, commentsError]);
@@ -75,12 +76,26 @@ export default function TaskPage() {
       }
       const parsedTaskId = Number(taskId);
       await updateTask(parsedTaskId, data);
-      toast("Task successfully updated!");
+      toast.success("Task successfully updated!");
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error("An error occurred, selected task could not be updated. ");
     }
+  };
+
+  const handlePostCommentButtonClick = async () => {
+    const parsedNewComment = commentSchemaValidator.parse({
+      content: editedContent,
+    });
+    handleNewCommentSubmission(Number(taskId), parsedNewComment);
+    setEditedContent("");
+    setIsAddingComment(false);
+  };
+
+  const handleCancelNewComment = () => {
+    setEditedContent("");
+    setIsAddingComment(false);
   };
 
   return (
@@ -112,25 +127,37 @@ export default function TaskPage() {
                 Add
               </Button>
             </div>
-            {areCommentsLoading ? (
-              <p> Loading comments... </p>
-            ) : (
-              comments?.map((comment) => (
+            <div className="flex flex-col gap-2">
+              {isAddingComment && (
                 <CommentCard
-                  key={`${taskId}-${comment.id}`}
-                  comment={comment}
+                  isNew={true}
+                  isEditing={true}
                   editedContent={editedContent}
                   setEditedContent={setEditedContent}
-                  isEditing={editingId === comment.id}
-                  onEditButtonClick={() =>
-                    handleCommentEditButtonClick(comment)
-                  }
-                  onDelete={() => handleDeleteComment(comment)}
-                  onCancelEditing={() => setEditingId(null)}
-                  onSave={handleEditComment}
+                  onPost={handlePostCommentButtonClick}
+                  onCancelNew={handleCancelNewComment}
                 />
-              ))
-            )}
+              )}
+              {areCommentsLoading ? (
+                <p> Loading comments... </p>
+              ) : (
+                comments?.map((comment) => (
+                  <CommentCard
+                    key={`${taskId}-${comment.id}`}
+                    comment={comment}
+                    editedContent={editedContent}
+                    setEditedContent={setEditedContent}
+                    isEditing={editingId === comment.id}
+                    onEditButtonClick={() =>
+                      handleCommentEditButtonClick(comment)
+                    }
+                    onDelete={() => handleDeleteComment(comment)}
+                    onCancelEditing={() => setEditingId(null)}
+                    onSave={handleEditComment}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}

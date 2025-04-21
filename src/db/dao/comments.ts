@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "..";
 import { comments } from "../schema/comments";
 import { users } from "../schema/users";
-import { commentSchemaValidator } from "@/types/zod";
+import { commentSchemaValidator, idValidator } from "@/types/zod";
 import { z } from "zod";
 
 export async function fetchComments(taskId: number) {
@@ -50,4 +50,18 @@ export async function updateComment(
     .returning();
 
   return udpatedComment;
+}
+
+export async function addComment(
+  comment: z.infer<typeof commentSchemaValidator> & {
+    taskId: z.infer<typeof idValidator>;
+    authorId: z.infer<typeof idValidator>;
+  }
+) {
+  const [insertedComment] = await db
+    .insert(comments)
+    .values(comment)
+    .returning();
+
+  return insertedComment;
 }
