@@ -1,7 +1,7 @@
 "use client";
 import UserAuthForm from "@/components/userAuthForm";
 import { z } from "zod";
-import { userAuthSchemaValidator } from "@/types/zod";
+import { userAuthInputValidator } from "@/types/zod";
 import { signupNewUser } from "@/services/signup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 export default function SignupPage() {
   const router = useRouter();
   const handleSignUpFormSubmission = async (
-    userAuth: z.infer<typeof userAuthSchemaValidator>
+    userAuth: z.infer<typeof userAuthInputValidator>
   ) => {
     try {
       const { email } = await signupNewUser(userAuth.email, userAuth.password);
@@ -17,7 +17,7 @@ export default function SignupPage() {
       router.push("/login");
     } catch (error) {
       console.error(error);
-      toast.error(`An error occurred, user could not be added. `);
+      toast.error("User could not be added. ");
     }
   };
 

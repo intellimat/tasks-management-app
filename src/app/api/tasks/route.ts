@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { TaskSchemaValidator } from "@/types/zod";
+import { TaskInputValidator } from "@/types/zod";
 import { getServerSession } from "next-auth";
 import authConfig from "../auth/[...nextauth]/auth.config";
 import { fetchTasks, insertTask } from "@/db/dao/tasks";
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
-    const parsed = TaskSchemaValidator.safeParse(body);
+    const parsed = TaskInputValidator.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(

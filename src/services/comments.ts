@@ -1,6 +1,6 @@
 import { fetcher } from "@/lib/fetcher";
 import { Comment } from "@/types/comments";
-import { commentSchemaValidator } from "@/types/zod";
+import { commentInputValidator } from "@/types/zod";
 import { z } from "zod";
 
 export async function deleteComment(commentId: number) {
@@ -11,7 +11,7 @@ export async function deleteComment(commentId: number) {
 
 export async function updateComment(
   commentId: number,
-  commentData: z.infer<typeof commentSchemaValidator>
+  commentData: z.infer<typeof commentInputValidator>
 ) {
   return fetcher<{ updatedComment: Comment }>(`/api/comments/${commentId}`, {
     method: "PUT",
@@ -20,7 +20,7 @@ export async function updateComment(
 }
 export async function postComment(
   taskId: number,
-  commentData: z.infer<typeof commentSchemaValidator>
+  commentData: z.infer<typeof commentInputValidator>
 ) {
   return fetcher<{ updatedComment: Comment }>(`/api/tasks/${taskId}/comments`, {
     method: "POST",

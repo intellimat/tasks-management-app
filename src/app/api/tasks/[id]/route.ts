@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { idValidator, TaskSchemaValidator } from "@/types/zod";
+import { idValidator, TaskInputValidator } from "@/types/zod";
 import { deleteTask, fetchTaskById, updateTask } from "@/db/dao/tasks";
 
 // GET /api/tasks/:taskId - get a task
@@ -82,7 +82,7 @@ export async function PUT(
     const body = await req.json();
 
     const parsedTaskId = idValidator.safeParse(Number(id));
-    const parsedTask = TaskSchemaValidator.safeParse(body);
+    const parsedTask = TaskInputValidator.safeParse(body);
 
     if (!parsedTaskId.success) {
       return NextResponse.json(

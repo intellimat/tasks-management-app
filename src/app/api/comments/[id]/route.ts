@@ -1,5 +1,5 @@
 import { deleteCommentById, updateComment } from "@/db/dao/comments";
-import { commentSchemaValidator, idValidator } from "@/types/zod";
+import { commentInputValidator, idValidator } from "@/types/zod";
 import { NextRequest, NextResponse } from "next/server";
 
 // DELETE /api/comments/:id — delete comment
@@ -49,7 +49,7 @@ export async function PUT(
     const body = await req.json();
     const { id } = await params;
     const parsedCommentId = idValidator.safeParse(Number(id));
-    const parsedComment = commentSchemaValidator.safeParse(body);
+    const parsedComment = commentInputValidator.safeParse(body);
 
     if (!parsedCommentId.success) {
       return NextResponse.json(

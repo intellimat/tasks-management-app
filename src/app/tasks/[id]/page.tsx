@@ -1,21 +1,15 @@
 "use client";
 
 import TaskForm from "@/components/taskForm";
-import { updateTask } from "@/services/tasks";
-import { commentSchemaValidator, TaskSchemaValidator } from "@/types/zod";
-import { toast } from "sonner";
-import { z } from "zod";
+import { commentInputValidator } from "@/types/zod";
 import { useParams, useRouter } from "next/navigation";
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
-import { Task } from "@/types/task";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useShowError } from "@/hooks/useShowError";
 import CommentCard from "@/components/commentCard";
 import { Button } from "@/components/ui/button";
 import useComments from "@/hooks/useComments";
-import { getHoursFromMillis, getMillisFromHours } from "@/lib/datetime";
 import { Comment } from "@/types/comments";
+import { useTask } from "@/hooks/useTask";
 
 export default function TaskPage() {
   const router = useRouter();
@@ -26,13 +20,10 @@ export default function TaskPage() {
   const [editedContent, setEditedContent] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const {
-    data: task,
-    error: taskError,
-    isLoading: isTaskLoading,
-  } = useSWR<Task, Error>(taskId ? `/api/tasks/${taskId}` : null, fetcher, {
-    errorRetryCount: 0,
-  });
+  const { task, taskError, isTaskLoading, handleUpdateTask } = useTask(
+    typeof taskId === "string" ? taskId : undefined,
+    () => router.push("/dashboard")
+  );
 
   const {
     comments,
@@ -40,62 +31,27 @@ export default function TaskPage() {
     areCommentsLoading,
     handleDeleteComment,
     handleEditComment,
-    handleNewCommentSubmission,
+    handleNewCommentSubmission: handleNewCommentSubmissionClick,
   } = useComments(setEditingId, taskId);
 
   useShowError([taskError, commentsError]);
+
+  const resetAddingNewComment = () => {
+    setEditedContent("");
+    setIsAddingComment(false);
+  };
 
   const handleCommentEditButtonClick = (comment: Comment) => {
     setEditingId(comment.id);
     setEditedContent(comment.content);
   };
 
-  const parsedTask = useMemo(() => {
-    if (!task) {
-      return undefined;
-    }
-    return {
-      ...task,
-      // Transform milliseconds into hours
-      timeEstimation: task.timeEstimation
-        ? getHoursFromMillis(task.timeEstimation)
-        : undefined,
-    };
-  }, [task]);
-
-  const handleUpdateTaskSubmission = async (
-    data: z.infer<typeof TaskSchemaValidator>
-  ) => {
-    try {
-      if (data.timeEstimation) {
-        // Transform hours into milliseconds
-        data.timeEstimation = getMillisFromHours(data.timeEstimation);
-      }
-      if (!taskId) {
-        return;
-      }
-      const parsedTaskId = Number(taskId);
-      await updateTask(parsedTaskId, data);
-      toast.success("Task successfully updated!");
-      router.push("/dashboard");
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred, selected task could not be updated. ");
-    }
-  };
-
   const handlePostCommentButtonClick = async () => {
-    const parsedNewComment = commentSchemaValidator.parse({
+    const parsedNewComment = commentInputValidator.parse({
       content: editedContent,
     });
-    handleNewCommentSubmission(Number(taskId), parsedNewComment);
-    setEditedContent("");
-    setIsAddingComment(false);
-  };
-
-  const handleCancelNewComment = () => {
-    setEditedContent("");
-    setIsAddingComment(false);
+    handleNewCommentSubmissionClick(Number(taskId), parsedNewComment);
+    resetAddingNewComment();
   };
 
   return (
@@ -111,10 +67,7 @@ export default function TaskPage() {
       ) : (
         <div className="flex flex-col md:flex-row md:gap-12">
           <div className="w-full mt-4">
-            <TaskForm
-              onSubmit={handleUpdateTaskSubmission}
-              prefill={parsedTask}
-            />
+            <TaskForm onSubmit={handleUpdateTask} prefill={task} />
           </div>
           <div className="w-full pt-2 pb-4">
             <div className="flex justify-between mb-2">
@@ -135,7 +88,7 @@ export default function TaskPage() {
                   editedContent={editedContent}
                   setEditedContent={setEditedContent}
                   onPost={handlePostCommentButtonClick}
-                  onCancelNew={handleCancelNewComment}
+                  onCancelNew={resetAddingNewComment}
                 />
               )}
               {areCommentsLoading ? (

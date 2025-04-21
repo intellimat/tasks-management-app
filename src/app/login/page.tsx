@@ -1,7 +1,7 @@
 "use client";
 
 import UserAuthForm from "@/components/userAuthForm";
-import { userAuthSchemaValidator } from "@/types/zod";
+import { userAuthInputValidator } from "@/types/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   async function handleLoginFormSubmission(
-    userAuth: z.infer<typeof userAuthSchemaValidator>
+    userAuth: z.infer<typeof userAuthInputValidator>
   ) {
     const response = await signIn("credentials", {
       ...userAuth,
@@ -21,7 +21,7 @@ export default function LoginPage() {
     if (response?.ok) {
       router.push("/dashboard");
     } else if (response?.status === 401) {
-      toast.error("Error: Wrong credentials. ");
+      toast.error("Wrong credentials. ");
     } else {
       toast.error(response?.error);
     }

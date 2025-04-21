@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/fetcher";
 import { deleteComment, postComment, updateComment } from "@/services/comments";
 import { Comment } from "@/types/comments";
-import { commentSchemaValidator } from "@/types/zod";
+import { commentInputValidator } from "@/types/zod";
 import { ParamValue } from "next/dist/server/request/params";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
@@ -26,29 +26,29 @@ const useComments = (
   );
 
   const handleEditComment = async (comment: Comment) => {
-    const commentData = commentSchemaValidator.parse(comment); // strip extra properties
+    const commentData = commentInputValidator.parse(comment); // strip extra properties
     try {
       await updateComment(comment.id, commentData);
       setEditingId(null);
       toast.success("Comment successfully updated!");
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, selected comment could not be updated. ");
+      toast.error("Selected comment could not be updated. ");
     }
     mutate();
   };
 
   const handleNewCommentSubmission = async (
     taskId: number,
-    newComment: z.infer<typeof commentSchemaValidator>
+    newComment: z.infer<typeof commentInputValidator>
   ) => {
     try {
       await postComment(taskId, newComment);
-      toast.success("New Comment was added successfully!");
+      toast.success("New comment was added successfully!");
       mutate();
     } catch (error) {
       console.error(error);
-      toast.error("Error: New Comment could not be added. ");
+      toast.error("New comment could not be added. ");
     }
   };
 
@@ -63,7 +63,7 @@ const useComments = (
       toast.success(`Comment was successfully deleted!`);
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, your comment could not be deleted.");
+      toast.error("Your comment could not be deleted.");
     }
   };
 

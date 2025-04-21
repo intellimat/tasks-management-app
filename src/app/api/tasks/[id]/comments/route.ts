@@ -1,6 +1,7 @@
 import authConfig from "@/app/api/auth/[...nextauth]/auth.config";
 import { addComment, fetchComments } from "@/db/dao/comments";
-import { idValidator, commentSchemaValidator } from "@/types/zod";
+import { fetchTaskById } from "@/db/dao/tasks";
+import { idValidator, commentInputValidator } from "@/types/zod";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -63,7 +64,7 @@ export async function POST(
       });
     }
 
-    const parsedNewCommentData = commentSchemaValidator.safeParse(body);
+    const parsedNewCommentData = commentInputValidator.safeParse(body);
 
     const parsedTaskId = idValidator.safeParse(Number(taskId));
 
@@ -84,13 +85,23 @@ export async function POST(
       });
     }
 
+    const fetchedTaskFromDB = await fetchTaskById(parsedTaskId.data);
+
+    if (!fetchedTaskFromDB) {
+      console.error("Task not found");
+      return NextResponse.json({
+        error: "Task not found",
+        status: 400,
+      });
+    }
+
     const insertedComment = await addComment({
       ...parsedNewCommentData.data,
       authorId: Number(authorId),
       taskId: parsedTaskId.data,
     });
 
-    if (insertedComment === null) {
+    if (!insertedComment) {
       console.error("New Comment could not be added. ");
       return NextResponse.json({
         error: "Comment could not be added. ",

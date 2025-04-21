@@ -2,7 +2,7 @@ import { getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
 import { createTask, deleteTask } from "@/services/tasks";
 import { Task, TaskStatus } from "@/types/task";
-import { TaskSchemaValidator } from "@/types/zod";
+import { TaskInputValidator } from "@/types/zod";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
@@ -65,7 +65,7 @@ const useTasks = (
       toast.success(`Task ${deletedTask.title} was successfully deleted!`);
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, your task could not be deleted.");
+      toast.error("Your task could not be deleted.");
     }
   };
 
@@ -74,7 +74,7 @@ const useTasks = (
   };
 
   const handleNewTaskSubmission = async (
-    data: z.infer<typeof TaskSchemaValidator>
+    data: z.infer<typeof TaskInputValidator>
   ) => {
     try {
       if (data.timeEstimation) {
@@ -87,7 +87,7 @@ const useTasks = (
       toast.success(`Task ${createdTask.title} was successfully created!`);
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, your task could not be created. ");
+      toast.error("Your task could not be created. ");
     } finally {
       setIsAddTaskDialogOpen(false);
     }

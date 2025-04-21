@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { userAuthSchemaValidator } from "@/types/zod";
+import { userAuthInputValidator } from "@/types/zod";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ interface Props {
   redirectMessage: string;
   redirectButtonLabel: string;
   redirectUrl: string;
-  onSubmit: (data: z.infer<typeof userAuthSchemaValidator>) => void;
+  onSubmit: (data: z.infer<typeof userAuthInputValidator>) => void;
 }
 export default function UserAuthForm({
   onSubmit,
@@ -30,8 +30,8 @@ export default function UserAuthForm({
   redirectButtonLabel,
   redirectUrl,
 }: Props) {
-  const form = useForm<z.infer<typeof userAuthSchemaValidator>>({
-    resolver: zodResolver(userAuthSchemaValidator),
+  const form = useForm<z.infer<typeof userAuthInputValidator>>({
+    resolver: zodResolver(userAuthInputValidator),
     defaultValues: {
       email: "",
       password: "",

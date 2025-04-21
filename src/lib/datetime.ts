@@ -28,9 +28,10 @@ export function getEstimatedTimeHHMM(millis: number) {
   return `${shownHours}${shownHours && shownMinutes ? ":" : ""}${shownMinutes}`;
 }
 
-export function getMillisFromHours(millis: number) {
-  return millis * 60 * 60 * 1000;
+export function getMillisFromHours(hours: number) {
+  return hours * 60 * 60 * 1000;
 }
-export function getHoursFromMillis(millis: number) {
-  return Math.floor(millis / 1000 / 60 / 60);
+
+export function getHoursFromMillis(millis: number): number {
+  return parseFloat((millis / 1000 / 60 / 60).toFixed(1));
 }
