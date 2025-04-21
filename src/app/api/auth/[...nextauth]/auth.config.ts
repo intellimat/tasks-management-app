@@ -36,7 +36,10 @@ const authConfig: NextAuthOptions = {
         const user = foundUsers[0];
 
         const valid = await compare(credentials.password, user.passwordHash);
-        if (!valid) return null;
+
+        if (!valid) {
+          return null;
+        }
 
         return {
           id: user.id.toString(),
