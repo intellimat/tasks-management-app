@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Management App
 
-## Getting Started
+An app to manage your tasks.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Create task
+- Update task
+- Delete task
+- View task
+- Filter tasks by title
+- View comments task
+- Add a comment to a task
+- Update a comment
+- Delete a comment
+- Authentication
+- Pages and routes guard
+- Sign Up new user
+- Login
+
+## Tech stack
+
+- Next.js 15
+- NextAuth.js
+- TailwindCSS
+- shadcn
+- react-hook-form
+- zod
+- Drizzle ORM
+
+## Requirements to run it
+
+- node.js >= 22.14.0
+- npm >= 11.3.0
+- Modern browser (Google Chrome or Mozilla Firefox)
+
+## .env
+
+Before running the app you need to create your _.env_ file in the root folder.
+
+```
+DATABASE_URL={postgres_SQL_db_Url}
+NEXTAUTH_SECRET={provided_auth_secret}
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Run it locally
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Install dependencies  
+` npm install`  
+run dev  
+`npm run dev`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API (custom)
 
-## Learn More
+### Tasks
 
-To learn more about Next.js, take a look at the following resources:
+- GET /api/tasks
+- POST /api/tasks
+- GET /api/tasks/:taskId
+- PUT /api/tasks/:taskId
+- DELETE /api/tasks/:taskId
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- GET /api/tasks/:taskId/comments
+- POST /api/tasks/:taskId/comments
 
-## Deploy on Vercel
+### Comments
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- PUT /api/comments/:commentId
+- DELETE /api/comments/:commentId
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Sign Up
+
+- POST /api/signup
+
+## Authentication
+
+Credentials based authentication with JWT session token. _NextAuth.js_ was used to implement the auth flow.
+Check _auth.config.ts_ to know more. NextAuth.js default middleware was added to protect pages and API routes (check _middleware.ts_).

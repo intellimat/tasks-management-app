@@ -1,14 +1,16 @@
 "use client";
-import { useTasks } from "@/hooks/useTasks";
+import useTasks from "@/hooks/useTasks";
 import TaskCard from "@/components/taskCard";
 import CustomDialog from "@/components/customDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useShowError } from "@/hooks/useShowError";
 import TaskForm from "@/components/taskForm";
 import { useState } from "react";
+import { Searchbar } from "@/components/searchBar";
 
 export default function DashboardPage() {
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
+  const [searchWord, setSearchWord] = useState("");
 
   const {
     inProgressTasks,
@@ -20,13 +22,14 @@ export default function DashboardPage() {
     handleDeleteTask,
     handleEditTask,
     handleNewTaskSubmission,
-  } = useTasks(setIsAddTaskDialogOpen);
+  } = useTasks(setIsAddTaskDialogOpen, searchWord);
 
-  useShowError(error);
+  useShowError([error]);
 
   return (
     <main>
-      <div className="flex justify-end py-3 md:py-0">
+      <div className="flex justify-end items-center py-3 md:py-1 gap-2">
+        <Searchbar onChange={(e) => setSearchWord(e.target.value)} />
         <CustomDialog
           buttonLabel="Add Task"
           triggerDialogClassName="uppercase"
@@ -44,6 +47,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4 ">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : inProgressTasks.length === 0 ? (
+              <p>No Tasks in progress</p>
             ) : (
               inProgressTasks.map((task) => (
                 <TaskCard
@@ -64,6 +69,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : todoTasks.length === 0 ? (
+              <p>No to do tasks</p>
             ) : (
               todoTasks.map((task) => (
                 <TaskCard
@@ -84,6 +91,8 @@ export default function DashboardPage() {
           <div className="[&>*]:mb-4">
             {isLoading ? (
               <Skeleton className="w-full h-32 bg-neutral-300" />
+            ) : doneTasks.length == 0 ? (
+              <p>No done tasks</p>
             ) : (
               doneTasks.map((task) => (
                 <TaskCard

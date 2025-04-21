@@ -1,15 +1,18 @@
+import { getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
-import { getMillisFromHours } from "@/lib/utils";
 import { createTask, deleteTask } from "@/services/tasks";
 import { Task, TaskStatus } from "@/types/task";
-import { TaskSchemaValidator } from "@/types/zod";
+import { TaskInputValidator } from "@/types/zod";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { z } from "zod";
 
-export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
+const useTasks = (
+  setIsAddTaskDialogOpen: (open: boolean) => void,
+  searchWord: string
+) => {
   const router = useRouter();
   const {
     data: tasks,
@@ -26,19 +29,31 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
       const unknownStatusTasks: Task[] = [];
 
       tasks?.forEach((task) => {
-        if (task.status === TaskStatus.InProgress) {
+        if (
+          task.status === TaskStatus.InProgress &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           inProgressTasks.push(task);
-        } else if (task.status === TaskStatus.Todo) {
+        } else if (
+          task.status === TaskStatus.Todo &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           todoTasks.push(task);
-        } else if (task.status === TaskStatus.Completed) {
+        } else if (
+          task.status === TaskStatus.Completed &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           doneTasks.push(task);
-        } else if (!task.status) {
+        } else if (
+          !task.status &&
+          task.title.toUpperCase().includes(searchWord.toUpperCase())
+        ) {
           unknownStatusTasks.push(task);
         }
       });
 
       return { inProgressTasks, todoTasks, doneTasks, unknownStatusTasks };
-    }, [tasks]);
+    }, [tasks, searchWord]);
 
   const handleDeleteTask = async (task: Task) => {
     try {
@@ -47,10 +62,10 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
         (currentTasks = []) => currentTasks.filter((_t) => _t.id !== task.id),
         false
       );
-      toast(`Task ${deletedTask.title} was successfully deleted!`);
+      toast.success(`Task ${deletedTask.title} was successfully deleted!`);
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, your task could not be deleted.");
+      toast.error("Your task could not be deleted.");
     }
   };
 
@@ -59,7 +74,7 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
   };
 
   const handleNewTaskSubmission = async (
-    data: z.infer<typeof TaskSchemaValidator>
+    data: z.infer<typeof TaskInputValidator>
   ) => {
     try {
       if (data.timeEstimation) {
@@ -69,10 +84,10 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
       const createdTask = await createTask(data);
       mutate((currentTasks = []) => [...currentTasks, createdTask], false); // Default currentTasks to [] if undefined
 
-      toast(`Task ${createdTask.title} was successfully created!`);
+      toast.success(`Task ${createdTask.title} was successfully created!`);
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred, your task could not be created. ");
+      toast.error("Your task could not be created. ");
     } finally {
       setIsAddTaskDialogOpen(false);
     }
@@ -90,3 +105,5 @@ export const useTasks = (setIsAddTaskDialogOpen: (open: boolean) => void) => {
     handleNewTaskSubmission,
   };
 };
+
+export default useTasks;

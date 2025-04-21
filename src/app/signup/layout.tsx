@@ -1,0 +1,14 @@
+import React from "react";
+
+export default function SignUpLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="p-6">
+      <h1 className="text-3xl font-bold text-center">Sign Up</h1>
+      {children}
+    </div>
+  );
+}

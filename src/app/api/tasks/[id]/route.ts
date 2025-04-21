@@ -1,11 +1,6 @@
-import { db } from "@/db";
-import { tasks } from "@/db/schema/tasks";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-import { TaskSchemaValidator } from "@/types/zod";
-
-const TaskIdValidator = z.number().int().positive();
+import { idValidator, TaskInputValidator } from "@/types/zod";
+import { deleteTask, fetchTaskById, updateTask } from "@/db/dao/tasks";
 
 // GET /api/tasks/:taskId - get a task
 export async function GET(
@@ -15,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
+    const parsedTaskId = idValidator.safeParse(Number(id));
 
     if (!parsedTaskId.success) {
       return NextResponse.json(
@@ -27,18 +22,14 @@ export async function GET(
       );
     }
 
-    const foundTasks = await db
-      .select()
-      .from(tasks)
-      .where(eq(tasks.id, parsedTaskId.data))
-      .limit(1);
+    const fetchedTaskFromDB = await fetchTaskById(parsedTaskId.data);
 
     // If task is not found, return a 404 response
-    if (foundTasks.length === 0) {
+    if (fetchedTaskFromDB === null) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    return NextResponse.json(foundTasks[0]);
+    return NextResponse.json(fetchedTaskFromDB);
   } catch (error) {
     console.error("GET /api/tasks error:", error);
     return NextResponse.json(
@@ -56,7 +47,7 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
+    const parsedTaskId = idValidator.safeParse(Number(id));
 
     if (!parsedTaskId.success) {
       return NextResponse.json(
@@ -68,10 +59,7 @@ export async function DELETE(
       );
     }
 
-    const [deletedTask] = await db
-      .delete(tasks)
-      .where(eq(tasks.id, parsedTaskId.data))
-      .returning();
+    const deletedTask = await deleteTask(parsedTaskId.data);
 
     return NextResponse.json({
       deletedTask,
@@ -84,7 +72,7 @@ export async function DELETE(
     );
   }
 }
-// DELETE /api/tasks — create a new task
+// PUT /api/tasks — create a new task
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -93,8 +81,8 @@ export async function PUT(
     const { id } = await params;
     const body = await req.json();
 
-    const parsedTaskId = TaskIdValidator.safeParse(Number(id));
-    const parsedTask = TaskSchemaValidator.safeParse(body);
+    const parsedTaskId = idValidator.safeParse(Number(id));
+    const parsedTask = TaskInputValidator.safeParse(body);
 
     if (!parsedTaskId.success) {
       return NextResponse.json(
@@ -113,11 +101,7 @@ export async function PUT(
       );
     }
 
-    const [updatedTask] = await db
-      .update(tasks)
-      .set(parsedTask.data)
-      .where(eq(tasks.id, parsedTaskId.data))
-      .returning();
+    const updatedTask = await updateTask(parsedTaskId.data, parsedTask.data);
 
     return NextResponse.json({
       updatedTask,

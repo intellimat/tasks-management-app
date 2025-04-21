@@ -1,5 +1,5 @@
 "use client";
-import { TaskStatus } from "@/types/task";
+import { Task, TaskStatus } from "@/types/task";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,15 +22,15 @@ import {
 } from "@/components/ui/select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { TaskSchemaValidator } from "@/types/zod";
+import { TaskInputValidator } from "@/types/zod";
 
 interface Props {
-  onSubmit: (data: z.infer<typeof TaskSchemaValidator>) => void;
-  prefill?: z.infer<typeof TaskSchemaValidator>;
+  onSubmit: (data: z.infer<typeof TaskInputValidator>) => void;
+  prefill?: Task;
 }
 export default function TaskForm({ onSubmit, prefill }: Props) {
-  const form = useForm<z.infer<typeof TaskSchemaValidator>>({
-    resolver: zodResolver(TaskSchemaValidator),
+  const form = useForm<z.infer<typeof TaskInputValidator>>({
+    resolver: zodResolver(TaskInputValidator),
     defaultValues: {
       title: prefill?.title || "",
       description: prefill?.description || "",
@@ -45,6 +45,25 @@ export default function TaskForm({ onSubmit, prefill }: Props) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full space-y-3 flex flex-col"
       >
+        {prefill?.author && (
+          <FormField
+            disabled={true}
+            name="author"
+            render={() => (
+              <FormItem>
+                <FormLabel className="font-semibold">Author</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={true}
+                    readOnly={true}
+                    value={prefill?.author?.name || prefill?.author?.email}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="title"
@@ -107,6 +126,7 @@ export default function TaskForm({ onSubmit, prefill }: Props) {
               </FormLabel>
               <FormControl>
                 <Input
+                  step={0.1}
                   type="number"
                   {...field}
                   value={field.value ?? ""}

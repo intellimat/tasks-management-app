@@ -7,6 +7,7 @@ import {
   pgEnum,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
 export const taskStatusEnum = pgEnum("task_status", [
   "in progress",
@@ -16,6 +17,10 @@ export const taskStatusEnum = pgEnum("task_status", [
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
+  authorId: serial("author_id").references(() => users.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
   title: varchar("title", { length: 255 }).notNull(),
   status: taskStatusEnum("status"),
   description: text("description"),

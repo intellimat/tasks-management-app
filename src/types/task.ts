@@ -1,3 +1,5 @@
+import { Author } from "./author";
+
 export enum TaskStatus {
   InProgress = "in progress",
   Todo = "to do",
@@ -6,6 +8,7 @@ export enum TaskStatus {
 
 export interface Task {
   id: number;
+  author: Author | null;
   title: string;
   status?: TaskStatus;
   description?: string;
