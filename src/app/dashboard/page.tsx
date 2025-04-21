@@ -24,7 +24,7 @@ export default function DashboardPage() {
     handleNewTaskSubmission,
   } = useTasks(setIsAddTaskDialogOpen, searchWord);
 
-  useShowError(error);
+  useShowError([error]);
 
   return (
     <main>
