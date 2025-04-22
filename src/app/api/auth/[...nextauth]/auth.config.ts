@@ -1,10 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import { db } from "@/db";
-import { eq } from "drizzle-orm";
-import { users } from "@/db/schema/users";
 import { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { _fetchUserByEmail } from "@/db/dao/users";
 
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("NEXTAUTH_SECRET missing in your .env file!");
@@ -23,21 +21,18 @@ const authConfig: NextAuthOptions = {
           return null;
         }
 
-        const foundUsers = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, credentials.email))
-          .limit(1);
+        const user = await _fetchUserByEmail(credentials.email);
 
-        if (foundUsers.length === 0) {
+        if (user === null) {
           return null;
         }
 
-        const user = foundUsers[0];
+        const isPasswordValid = await compare(
+          credentials.password,
+          user.passwordHash
+        );
 
-        const valid = await compare(credentials.password, user.passwordHash);
-
-        if (!valid) {
+        if (!isPasswordValid) {
           return null;
         }
 
@@ -50,6 +45,7 @@ const authConfig: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 43200, // 12 hours: 12*60*60=43200
   },
   callbacks: {
     async session({ session, token }: { session: Session; token: JWT }) {

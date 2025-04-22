@@ -14,7 +14,7 @@ export default async function TaskLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="px-6">
+    <div className="p-6">
       <Breadcrumb className="my-3">
         <BreadcrumbList>
           <BreadcrumbItem>

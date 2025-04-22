@@ -93,6 +93,8 @@ export default function TaskPage() {
               )}
               {areCommentsLoading ? (
                 <p> Loading comments... </p>
+              ) : comments?.length === 0 && !isAddingComment ? (
+                <p> No comments yet</p>
               ) : (
                 comments?.map((comment) => (
                   <CommentCard
