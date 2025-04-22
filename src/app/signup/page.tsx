@@ -5,6 +5,7 @@ import { userAuthInputValidator } from "@/types/zod";
 import { signupNewUser } from "@/services/signup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,7 +15,16 @@ export default function SignupPage() {
     try {
       const { email } = await signupNewUser(userAuth.email, userAuth.password);
       toast.success(`User ${email} added successfully!`);
-      router.push("/login");
+      toast.info("Loggin in...");
+      const signInResponse = await signIn("credentials", {
+        ...userAuth,
+        redirect: false,
+      });
+      if (signInResponse?.ok) {
+        router.push("/dashboard");
+      } else {
+        toast.error(signInResponse?.error);
+      }
     } catch (error) {
       console.error(error);
       toast.error("User could not be added. ");

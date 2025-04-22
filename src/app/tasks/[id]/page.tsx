@@ -20,10 +20,10 @@ export default function TaskPage() {
   const [editedContent, setEditedContent] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const { task, taskError, isTaskLoading, handleUpdateTask } = useTask(
-    typeof taskId === "string" ? taskId : undefined,
-    () => router.push("/dashboard")
-  );
+  const { task, taskError, isTaskLoading, handleUpdateTask, handleDeleteTask } =
+    useTask(typeof taskId === "string" ? taskId : undefined, () =>
+      router.push("/dashboard")
+    );
 
   const {
     comments,
@@ -67,7 +67,11 @@ export default function TaskPage() {
       ) : (
         <div className="flex flex-col md:flex-row md:gap-12">
           <div className="w-full mt-4">
-            <TaskForm onSubmit={handleUpdateTask} prefill={task} />
+            <TaskForm
+              onSubmit={handleUpdateTask}
+              onDelete={handleDeleteTask}
+              prefill={task}
+            />
           </div>
           <div className="w-full pt-2 pb-4">
             <div className="flex justify-between mb-2">
@@ -93,6 +97,8 @@ export default function TaskPage() {
               )}
               {areCommentsLoading ? (
                 <p> Loading comments... </p>
+              ) : comments?.length === 0 && !isAddingComment ? (
+                <p> No comments yet</p>
               ) : (
                 comments?.map((comment) => (
                   <CommentCard

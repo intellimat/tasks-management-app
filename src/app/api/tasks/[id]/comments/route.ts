@@ -51,15 +51,15 @@ export async function POST(
     if (!taskId) {
       console.error(`Invalid TaskId: ${taskId}`);
       return NextResponse.json({
-        error: "Invalid TaskId ",
+        error: "Invalid task id ",
         status: 400,
       });
     }
 
     if (!authorId) {
-      console.error(`Invalid authorId ${authorId}`);
+      console.error(`Invalid authorId: ${authorId}`);
       return NextResponse.json({
-        error: "No authorId could be retrieved for your new comment. ",
+        error: "No author id could be retrieved for your new comment",
         status: 500,
       });
     }
@@ -71,7 +71,7 @@ export async function POST(
     if (!parsedTaskId.success) {
       console.error(parsedNewCommentData.error);
       return NextResponse.json({
-        error: "Invalid Task Id. ",
+        error: "Invalid task id. ",
         status: 400,
       });
     }
@@ -79,7 +79,7 @@ export async function POST(
     if (!parsedNewCommentData.success) {
       console.error(parsedNewCommentData.error);
       return NextResponse.json({
-        error: "Invalid New Comment. ",
+        error: "Invalid new comment",
         details: { receivedComment: body },
         status: 400,
       });
@@ -87,7 +87,7 @@ export async function POST(
 
     const fetchedTaskFromDB = await fetchTaskById(parsedTaskId.data);
 
-    if (!fetchedTaskFromDB) {
+    if (fetchedTaskFromDB === null) {
       console.error("Task not found");
       return NextResponse.json({
         error: "Task not found",
@@ -101,10 +101,10 @@ export async function POST(
       taskId: parsedTaskId.data,
     });
 
-    if (!insertedComment) {
-      console.error("New Comment could not be added. ");
+    if (insertedComment === null) {
+      console.error("New comment could not be added");
       return NextResponse.json({
-        error: "Comment could not be added. ",
+        error: "New comment could not be added",
         status: 500,
       });
     }
@@ -113,7 +113,7 @@ export async function POST(
   } catch (error) {
     console.error(`POST /api/tasks/:taskId/comments error: `, error);
     return NextResponse.json(
-      { error: "Failed to add comment. " },
+      { error: "Failed to add comment" },
       { status: 500 }
     );
   }

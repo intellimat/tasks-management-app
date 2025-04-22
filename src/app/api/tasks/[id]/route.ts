@@ -31,7 +31,7 @@ export async function GET(
 
     return NextResponse.json(fetchedTaskFromDB);
   } catch (error) {
-    console.error("GET /api/tasks error:", error);
+    console.error("GET /api/tasks error: ", error);
     return NextResponse.json(
       { error: "Failed to fetch task" },
       { status: 500 }
@@ -61,13 +61,20 @@ export async function DELETE(
 
     const deletedTask = await deleteTask(parsedTaskId.data);
 
+    if (deletedTask === null) {
+      return NextResponse.json(
+        { error: "Failed to delete task" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       deletedTask,
     });
   } catch (error) {
     console.error("DELETE /api/tasks error:", error);
     return NextResponse.json(
-      { error: "Failed to delete task." },
+      { error: "Failed to delete task" },
       { status: 500 }
     );
   }
@@ -103,13 +110,20 @@ export async function PUT(
 
     const updatedTask = await updateTask(parsedTaskId.data, parsedTask.data);
 
+    if (updatedTask === null) {
+      return NextResponse.json(
+        { error: "Task could not be updated" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       updatedTask,
     });
   } catch (error) {
     console.error("PUT /api/tasks error:", error);
     return NextResponse.json(
-      { error: "Failed to update task." },
+      { error: "Failed to update task" },
       { status: 500 }
     );
   }

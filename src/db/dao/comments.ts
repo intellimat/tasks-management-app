@@ -36,6 +36,10 @@ export async function deleteCommentById(commentId: number) {
     .where(eq(comments.id, commentId))
     .returning();
 
+  if (!deletedComment) {
+    return null;
+  }
+
   return deletedComment;
 }
 
@@ -48,6 +52,10 @@ export async function updateComment(
     .set({ content: comment.content })
     .where(eq(comments.id, commentId))
     .returning();
+
+  if (!udpatedComment) {
+    return null;
+  }
 
   return udpatedComment;
 }
@@ -62,6 +70,10 @@ export async function addComment(
     .insert(comments)
     .values(comment)
     .returning();
+
+  if (!insertedComment) {
+    return null;
+  }
 
   return insertedComment;
 }

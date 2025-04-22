@@ -19,6 +19,7 @@ export default function LoginPage() {
     });
 
     if (response?.ok) {
+      toast.success("Login successful!");
       router.push("/dashboard");
     } else if (response?.status === 401) {
       toast.error("Wrong credentials. ");
