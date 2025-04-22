@@ -87,6 +87,10 @@ export async function insertTask(
     })
     .returning();
 
+  if (!newTask) {
+    return null;
+  }
+
   // Returned enriched task with Author object
   const enrichedTask = {
     ...newTask,
@@ -104,6 +108,10 @@ export async function deleteTask(taskId: number) {
     .delete(tasks)
     .where(eq(tasks.id, taskId))
     .returning();
+
+  if (!deletedTask) {
+    return null;
+  }
   return deletedTask;
 }
 
@@ -116,5 +124,9 @@ export async function updateTask(
     .set(task)
     .where(eq(tasks.id, taskId))
     .returning();
+
+  if (!updatedTask) {
+    return null;
+  }
   return updatedTask;
 }

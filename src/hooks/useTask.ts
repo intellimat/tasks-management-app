@@ -1,16 +1,16 @@
 import { getHoursFromMillis, getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
-import { updateTask } from "@/services/tasks";
+import { deleteTask, updateTask } from "@/services/tasks";
 import { Task } from "@/types/task";
 import { TaskInputValidator } from "@/types/zod";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { z } from "zod";
 
 export const useTask = (
   taskId: string | undefined,
-  onUpdateSuccess: () => void
+  onMutationSuccess: () => void
 ) => {
   const {
     data: task,
@@ -45,10 +45,26 @@ export const useTask = (
       const parsedTaskId = Number(taskId);
       await updateTask(parsedTaskId, data);
       toast.success("Task successfully updated!");
-      onUpdateSuccess();
+      onMutationSuccess();
     } catch (error) {
       console.error(error);
       toast.error("Selected task could not be updated. ");
+    }
+  };
+
+  const handleDeleteTask = async () => {
+    try {
+      if (!task) {
+        toast.error("Your task could not be deleted.");
+        return;
+      }
+      const { deletedTask } = await deleteTask(task.id);
+      await mutate("/api/tasks");
+      toast.success(`Task "${deletedTask.title}" was successfully deleted!`);
+      onMutationSuccess();
+    } catch (error) {
+      console.error(error);
+      toast.error("Your task could not be deleted.");
     }
   };
 
@@ -57,5 +73,6 @@ export const useTask = (
     taskError,
     isTaskLoading,
     handleUpdateTask,
+    handleDeleteTask,
   };
 };

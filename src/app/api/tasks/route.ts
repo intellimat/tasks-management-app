@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authConfig);
     if (!session || !session.user.email || !session.user.id) {
+      /* it should never run this code because we handle auth with middleware
+       * but we add it for type-safety because we accessing the session object
+       */
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
@@ -30,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid input. ", details: parsed.error.flatten() },
+        { error: "Invalid input", details: parsed.error.flatten() },
         { status: 400 }
       );
     }
@@ -40,12 +43,16 @@ export async function POST(req: NextRequest) {
       userId: Number(session.user.id),
     });
 
+    if (insertedTask === null) {
+      return NextResponse.json(
+        { error: "Failed to add task" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(insertedTask);
   } catch (error) {
     console.error("POST /api/tasks error: ", error);
-    return NextResponse.json(
-      { error: "Failed to add task. " },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to add task" }, { status: 500 });
   }
 }

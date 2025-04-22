@@ -25,8 +25,8 @@ export async function DELETE(
 
     if (deletedCommentFromDB === null) {
       return NextResponse.json(
-        { error: "Comment not found. " },
-        { status: 404 }
+        { error: "Comment could not be deleted" },
+        { status: 500 }
       );
     }
 
@@ -75,8 +75,8 @@ export async function PUT(
 
     if (udpatedComment === null) {
       return NextResponse.json(
-        { error: "Comment not found. " },
-        { status: 404 }
+        { error: "Comment could not be updated" },
+        { status: 500 }
       );
     }
 
@@ -84,7 +84,7 @@ export async function PUT(
   } catch (error) {
     console.error(`PUT /api/comments/:id error: `, error);
     return NextResponse.json(
-      { error: "Failed to update comment. " },
+      { error: "Failed to update comment" },
       { status: 500 }
     );
   }

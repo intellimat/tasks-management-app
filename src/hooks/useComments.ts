@@ -35,7 +35,7 @@ const useComments = (
       console.error(error);
       toast.error("Selected comment could not be updated. ");
     }
-    mutate();
+    await mutate();
   };
 
   const handleNewCommentSubmission = async (
@@ -45,7 +45,7 @@ const useComments = (
     try {
       await postComment(taskId, newComment);
       toast.success("New comment was added successfully!");
-      mutate();
+      await mutate();
     } catch (error) {
       console.error(error);
       toast.error("New comment could not be added. ");
@@ -55,7 +55,7 @@ const useComments = (
   const handleDeleteComment = async (comment: Comment) => {
     try {
       await deleteComment(comment.id);
-      mutate(
+      await mutate(
         (currentComments = []) =>
           currentComments.filter((_c) => _c.id !== comment.id),
         false

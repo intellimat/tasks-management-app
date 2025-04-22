@@ -23,12 +23,14 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { TaskInputValidator } from "@/types/zod";
+import AlertCustomDialog from "./alertCustomDialog";
 
 interface Props {
   onSubmit: (data: z.infer<typeof TaskInputValidator>) => void;
+  onDelete?: () => Promise<void>;
   prefill?: Task;
 }
-export default function TaskForm({ onSubmit, prefill }: Props) {
+export default function TaskForm({ onSubmit, onDelete, prefill }: Props) {
   const form = useForm<z.infer<typeof TaskInputValidator>>({
     resolver: zodResolver(TaskInputValidator),
     defaultValues: {
@@ -141,9 +143,27 @@ export default function TaskForm({ onSubmit, prefill }: Props) {
             </FormItem>
           )}
         />
-        <Button className="ml-auto" type="submit">
-          Submit
-        </Button>
+        <div className="flex justify-between gap-2">
+          {onDelete && (
+            <AlertCustomDialog
+              trigger={
+                <Button
+                  className="border-red-800 text-red-800 hover:bg-red-50 hover:text-red-800"
+                  variant={"outline"}
+                >
+                  Delete
+                </Button>
+              }
+              description="This action cannot be undone. This will permanently delete your
+            task."
+              onConfirmation={onDelete}
+            />
+          )}
+
+          <Button type="submit" className="ml-auto">
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );

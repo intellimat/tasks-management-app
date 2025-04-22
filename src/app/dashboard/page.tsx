@@ -28,7 +28,7 @@ export default function DashboardPage() {
 
   return (
     <main>
-      <div className="flex justify-end items-center py-3 md:py-1 gap-2">
+      <div className="flex justify-end items-center py-3 md:py-1 md:mb-2 gap-2">
         <Searchbar onChange={(e) => setSearchWord(e.target.value)} />
         <CustomDialog
           buttonLabel="Add Task"
