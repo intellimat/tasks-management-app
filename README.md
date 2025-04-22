@@ -79,3 +79,12 @@ run dev
 
 Credentials based authentication with JWT session token. _NextAuth.js_ was used to implement the auth flow.
 Check _auth.config.ts_ to know more. NextAuth.js default middleware was added to protect pages and API routes (check _middleware.ts_).
+
+## Database
+
+Schemas defined with Drizzle ORM.
+
+### ER
+
+![Database Diagram](docs/ER_database.png)
+
