@@ -1,9 +1,6 @@
-import { z } from "zod";
 import { fetcher } from "@/lib/fetcher";
 import { Task } from "@/types/task";
-import { TaskInputValidator } from "@/types/zod";
-
-type TaskFormData = z.infer<typeof TaskInputValidator>;
+import { TaskFormData } from "@/types/zod";
 
 export async function createTask(data: TaskFormData) {
   return fetcher<Task>("/api/tasks", {

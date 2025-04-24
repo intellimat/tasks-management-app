@@ -71,7 +71,8 @@ export async function POST(
     if (!parsedTaskId.success) {
       console.error(parsedNewCommentData.error);
       return NextResponse.json({
-        error: "Invalid task id. ",
+        error: "Invalid task id",
+        details: parsedTaskId.error.flatten(),
         status: 400,
       });
     }
@@ -80,7 +81,7 @@ export async function POST(
       console.error(parsedNewCommentData.error);
       return NextResponse.json({
         error: "Invalid new comment",
-        details: { receivedComment: body },
+        details: parsedNewCommentData.error.flatten(),
         status: 400,
       });
     }

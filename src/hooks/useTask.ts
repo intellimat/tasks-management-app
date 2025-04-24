@@ -2,11 +2,10 @@ import { getHoursFromMillis, getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
 import { deleteTask, updateTask } from "@/services/tasks";
 import { Task } from "@/types/task";
-import { TaskInputValidator } from "@/types/zod";
+import { TaskFormData } from "@/types/zod";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import useSWR, { mutate } from "swr";
-import { z } from "zod";
 
 export const useTask = (
   taskId: string | undefined,
@@ -33,15 +32,18 @@ export const useTask = (
     };
   }, [task]);
 
-  const handleUpdateTask = async (data: z.infer<typeof TaskInputValidator>) => {
+  const handleUpdateTask = async (data: TaskFormData) => {
     try {
+      if (!taskId) {
+        toast.error("Selected task could not be updated. ");
+        return;
+      }
+
       if (data.timeEstimation) {
         // Transform hours into milliseconds
         data.timeEstimation = getMillisFromHours(data.timeEstimation);
       }
-      if (!taskId) {
-        return;
-      }
+
       const parsedTaskId = Number(taskId);
       await updateTask(parsedTaskId, data);
       toast.success("Task successfully updated!");

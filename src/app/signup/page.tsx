@@ -1,7 +1,6 @@
 "use client";
 import UserAuthForm from "@/components/userAuthForm";
-import { z } from "zod";
-import { userAuthInputValidator } from "@/types/zod";
+import { UserAuth } from "@/types/zod";
 import { signupNewUser } from "@/services/signup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -9,9 +8,7 @@ import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const router = useRouter();
-  const handleSignUpFormSubmission = async (
-    userAuth: z.infer<typeof userAuthInputValidator>
-  ) => {
+  const handleSignUpFormSubmission = async (userAuth: UserAuth) => {
     try {
       const { email } = await signupNewUser(userAuth.email, userAuth.password);
       toast.success(`User ${email} added successfully!`);

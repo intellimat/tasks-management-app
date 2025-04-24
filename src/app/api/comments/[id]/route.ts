@@ -15,7 +15,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           error: "Invalid Comment Id",
-          details: { receivedCommentId: id },
+          details: parsedCommentId.error.flatten(),
         },
         { status: 400 }
       );
@@ -34,7 +34,7 @@ export async function DELETE(
   } catch (error) {
     console.error(`DELETE /api/comments/:id error: `, error);
     return NextResponse.json(
-      { error: "Failed to delete comment. " },
+      { error: "Failed to delete comment" },
       { status: 500 }
     );
   }
@@ -55,7 +55,7 @@ export async function PUT(
       return NextResponse.json(
         {
           error: "Invalid Comment Id",
-          details: { receivedCommentId: id },
+          details: parsedCommentId.error.flatten(),
         },
         { status: 400 }
       );

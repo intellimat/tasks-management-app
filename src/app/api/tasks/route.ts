@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error) {
     console.error("GET /api/tasks error: ", error);
     return NextResponse.json(
-      { error: "Failed to fetch tasks. " },
+      { error: "Failed to fetch tasks" },
       { status: 500 }
     );
   }
@@ -23,8 +23,9 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authConfig);
     if (!session || !session.user.email || !session.user.id) {
-      /* it should never run this code because we handle auth with middleware
-       * but we add it for type-safety because we accessing the session object
+      /* It should never run this code because we handle auth with middleware
+       * middleware.ts will protect any route or page from not authorized access.
+       * But we add this check for type-safety because we are accessing the session object down below
        */
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

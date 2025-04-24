@@ -1,18 +1,17 @@
 "use client";
 
 import UserAuthForm from "@/components/userAuthForm";
-import { userAuthInputValidator } from "@/types/zod";
+import { UserAuth } from "@/types/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  async function handleLoginFormSubmission(
-    userAuth: z.infer<typeof userAuthInputValidator>
-  ) {
+  async function handleLoginFormSubmission(userAuth: UserAuth) {
     const response = await signIn("credentials", {
       ...userAuth,
       redirect: false,
@@ -20,6 +19,7 @@ export default function LoginPage() {
 
     if (response?.ok) {
       toast.success("Login successful!");
+      setIsRedirecting(true);
       router.push("/dashboard");
     } else if (response?.status === 401) {
       toast.error("Wrong credentials. ");
@@ -30,13 +30,17 @@ export default function LoginPage() {
 
   return (
     <div className="w-full md:w-2xl mt-4 md:mx-auto">
-      <UserAuthForm
-        buttonLabel={"Submit"}
-        onSubmit={handleLoginFormSubmission}
-        redirectMessage="No account yet?"
-        redirectButtonLabel={"Sign Up"}
-        redirectUrl={"/signup"}
-      />
+      {isRedirecting ? (
+        <p> Redirecting to Dashboard page... </p>
+      ) : (
+        <UserAuthForm
+          buttonLabel={"Submit"}
+          onSubmit={handleLoginFormSubmission}
+          redirectMessage="No account yet?"
+          redirectButtonLabel={"Sign Up"}
+          redirectUrl={"/signup"}
+        />
+      )}
     </div>
   );
 }

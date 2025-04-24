@@ -13,7 +13,7 @@ import {
 interface Props {
   trigger: React.ReactNode;
   title?: string;
-  description: string;
+  description?: string;
   onConfirmation?: () => void;
 }
 export default function AlertCustomDialog({
@@ -30,7 +30,7 @@ export default function AlertCustomDialog({
           <AlertDialogTitle>
             {title ?? "Are you absolutely sure?"}
           </AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription>{description || ""}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>

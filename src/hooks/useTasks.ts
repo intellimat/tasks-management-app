@@ -2,12 +2,11 @@ import { getMillisFromHours } from "@/lib/datetime";
 import { fetcher } from "@/lib/fetcher";
 import { createTask, deleteTask } from "@/services/tasks";
 import { Task, TaskStatus } from "@/types/task";
-import { TaskInputValidator } from "@/types/zod";
+import { TaskFormData } from "@/types/zod";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
-import { z } from "zod";
 
 const useTasks = (
   setIsAddTaskDialogOpen: (open: boolean) => void,
@@ -73,9 +72,7 @@ const useTasks = (
     router.push(`/tasks/${taskId}`);
   };
 
-  const handleNewTaskSubmission = async (
-    data: z.infer<typeof TaskInputValidator>
-  ) => {
+  const handleNewTaskSubmission = async (data: TaskFormData) => {
     try {
       if (data.timeEstimation) {
         // Transform hours into milliseconds
