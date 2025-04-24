@@ -23,3 +23,9 @@ export const userAuthInputValidator = z.object({
 export const commentInputValidator = z.object({
   content: z.string().max(500),
 });
+
+// Inferred types from Zod schemas
+export type TaskFormData = z.infer<typeof TaskInputValidator>;
+export type UserAuth = z.infer<typeof userAuthInputValidator>;
+export type Id = z.infer<typeof idValidator>;
+export type CommentFormData = z.infer<typeof commentInputValidator>;

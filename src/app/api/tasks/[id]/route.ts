@@ -16,7 +16,7 @@ export async function GET(
       return NextResponse.json(
         {
           error: "Invalid taskId",
-          details: { receivedTaskId: id },
+          details: parsedTaskId.error.flatten(),
         },
         { status: 400 }
       );
@@ -53,7 +53,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           error: "Invalid taskId",
-          details: { receivedTaskId: id },
+          details: parsedTaskId.error.flatten(),
         },
         { status: 400 }
       );

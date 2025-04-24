@@ -1,5 +1,4 @@
 "use client";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { userAuthInputValidator } from "@/types/zod";
+import { UserAuth, userAuthInputValidator } from "@/types/zod";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +20,7 @@ interface Props {
   redirectMessage: string;
   redirectButtonLabel: string;
   redirectUrl: string;
-  onSubmit: (data: z.infer<typeof userAuthInputValidator>) => void;
+  onSubmit: (data: UserAuth) => void;
 }
 export default function UserAuthForm({
   onSubmit,
@@ -30,7 +29,7 @@ export default function UserAuthForm({
   redirectButtonLabel,
   redirectUrl,
 }: Props) {
-  const form = useForm<z.infer<typeof userAuthInputValidator>>({
+  const form = useForm<UserAuth>({
     resolver: zodResolver(userAuthInputValidator),
     defaultValues: {
       email: "",

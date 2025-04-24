@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     if (fetchedUserFromDB !== null) {
       // user already exists!
       return NextResponse.json(
-        { error: "Email already in use. " },
+        { error: "Email already in use" },
         { status: 400 }
       );
     }

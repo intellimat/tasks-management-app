@@ -3,7 +3,6 @@ import { Task, TaskStatus } from "@/types/task";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -22,22 +21,22 @@ import {
 } from "@/components/ui/select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { TaskInputValidator } from "@/types/zod";
+import { TaskFormData, TaskInputValidator } from "@/types/zod";
 import AlertCustomDialog from "./alertCustomDialog";
 
 interface Props {
-  onSubmit: (data: z.infer<typeof TaskInputValidator>) => void;
+  onSubmit: (data: TaskFormData) => void;
   onDelete?: () => Promise<void>;
   prefill?: Task;
 }
 export default function TaskForm({ onSubmit, onDelete, prefill }: Props) {
-  const form = useForm<z.infer<typeof TaskInputValidator>>({
+  const form = useForm<TaskFormData>({
     resolver: zodResolver(TaskInputValidator),
     defaultValues: {
       title: prefill?.title || "",
       description: prefill?.description || "",
       timeEstimation: prefill?.timeEstimation,
-      status: prefill?.status,
+      status: prefill?.status || undefined,
     },
   });
 

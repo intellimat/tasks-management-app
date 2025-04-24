@@ -2,8 +2,7 @@ import { db } from "..";
 import { tasks } from "../schema/tasks";
 import { users } from "../schema/users";
 import { eq } from "drizzle-orm";
-import { TaskInputValidator } from "@/types/zod";
-import { z } from "zod";
+import { TaskFormData } from "@/types/zod";
 
 export async function fetchTasks() {
   const rows = await db
@@ -76,7 +75,7 @@ export async function fetchTaskById(taskId: number) {
 }
 
 export async function insertTask(
-  task: z.infer<typeof TaskInputValidator>,
+  task: TaskFormData,
   { email, userId }: { email: string; userId: number }
 ) {
   const [newTask] = await db
@@ -115,10 +114,7 @@ export async function deleteTask(taskId: number) {
   return deletedTask;
 }
 
-export async function updateTask(
-  taskId: number,
-  task: z.infer<typeof TaskInputValidator>
-) {
+export async function updateTask(taskId: number, task: TaskFormData) {
   const [updatedTask] = await db
     .update(tasks)
     .set(task)

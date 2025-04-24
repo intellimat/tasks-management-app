@@ -1,12 +1,11 @@
 import { fetcher } from "@/lib/fetcher";
 import { deleteComment, postComment, updateComment } from "@/services/comments";
 import { Comment } from "@/types/comments";
-import { commentInputValidator } from "@/types/zod";
+import { CommentFormData, commentInputValidator } from "@/types/zod";
 import { ParamValue } from "next/dist/server/request/params";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
-import { z } from "zod";
 
 const useComments = (
   setEditingId: Dispatch<SetStateAction<number | null>>,
@@ -40,7 +39,7 @@ const useComments = (
 
   const handleNewCommentSubmission = async (
     taskId: number,
-    newComment: z.infer<typeof commentInputValidator>
+    newComment: CommentFormData
   ) => {
     try {
       await postComment(taskId, newComment);

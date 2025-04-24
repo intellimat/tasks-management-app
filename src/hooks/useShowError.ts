@@ -5,7 +5,9 @@ export function useShowError(errors?: (Error | null | undefined)[]) {
   const shownMessagesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!errors || errors.length === 0) return;
+    if (!errors || errors.length === 0) {
+      return;
+    }
 
     for (const err of errors) {
       const message = err?.message;
