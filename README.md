@@ -50,7 +50,7 @@ APP_PASSWORD=choose_your_app_user_password
 POSTGRES_DB=taskmgmtdb
 
 # Connection URLs
-DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
+MIGRATIONS_DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
 APP_DATABASE_URL=postgresql://$APP_USER:$APP_PASSWORD@localhost:5432/$POSTGRES_DB
 NEXTAUTH_SECRET={your_generated_auth_secret} # Read below how to generate it
 NEXTAUTH_URL=http://localhost:3000
