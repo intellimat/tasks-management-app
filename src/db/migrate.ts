@@ -4,12 +4,12 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 
-const myEnv = dotenv.config();
+const myEnv = dotenv.config({ path: ".env.development.local" }); // can be []
 dotenvExpand.expand(myEnv);
 
 const runMigrations = async () => {
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.MIGRATIONS_DATABASE_URL,
     max: 1, // Single connection for migrations
   });
 
