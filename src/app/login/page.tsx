@@ -22,10 +22,10 @@ export default function LoginPage() {
       toast.success("Login successful!");
       setIsRedirecting(true);
       if (response.url) {
-        router.replace(response.url);
+        router.push(response.url);
       }
     } else if (response?.status === 401) {
-      toast.error("Wrong credentials. ");
+      toast.error("Wrong credentials.");
     } else {
       toast.error(response?.error);
     }

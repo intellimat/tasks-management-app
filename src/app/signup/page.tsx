@@ -19,7 +19,7 @@ export default function SignupPage() {
         callbackUrl: "/dashboard",
       });
       if (signInResponse?.ok && signInResponse?.url) {
-        router.replace(signInResponse.url);
+        router.push(signInResponse.url);
       } else {
         toast.error(signInResponse?.error);
       }

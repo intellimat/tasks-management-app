@@ -44,6 +44,14 @@ const authConfig: NextAuthOptions = {
     maxAge: 43200, // 12 hours: 12*60*60=43200
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow redirects to same origin
+      if (new URL(url).origin === baseUrl) return url;
+      // Default fallback
+      return baseUrl;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;

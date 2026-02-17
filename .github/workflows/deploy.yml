@@ -70,7 +70,7 @@ jobs:
             tar -xzf /home/deploymentuser/deploy.tar.gz
 
             # Restart with PM2
-            pm2 reload ecosystem.config.js --update-env
+            /home/deploymentuser/.npm-global/bin/pm2 pm2 reload ecosystem.config.js --update-env
 
             # Clean up
             rm /home/deploymentuser/deploy.tar.gz
