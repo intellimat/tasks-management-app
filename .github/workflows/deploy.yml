@@ -28,6 +28,7 @@ jobs:
           # If you need build-time env vars (like public API URLs), add them here
           # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NODE_ENV: production
+          KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
           NEXTAUTH_SECRET: "build-time-placeholder"
           NEXTAUTH_URL: "build-time-placeholder"
 
@@ -39,6 +40,7 @@ jobs:
           cp -r .next/standalone/. deploy-package/
           cp -r .next/static deploy-package/.next/static
           cp -r public deploy-package/public 2>/dev/null || :
+          cp start.js deploy-package/
 
           # Create tarball for efficient transfer
           tar -czf deploy.tar.gz -C deploy-package .
