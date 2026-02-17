@@ -12,45 +12,41 @@ let dbInstance:
 async function initDb() {
   if (dbInstance) return dbInstance;
 
-  let connectionString;
+  let connectionString: string | undefined;
 
-  // LOCAL: Use .env.local
   if (process.env.NODE_ENV === "development" || process.env.APP_DATABASE_URL) {
     console.log("Using local .env connection string");
     connectionString = process.env.APP_DATABASE_URL;
-
     if (!connectionString) {
       throw new Error("APP_DATABASE_URL missing in your .env.local file!");
     }
-  }
-  // PRODUCTION: Use AzureKey Vault
-  else {
-    console.log("⏳ Fetching secrets from Azure key vault. ");
+  } else {
+    console.log("⏳ Fetching secrets from Azure Key Vault...");
     const credential = new DefaultAzureCredential();
     const kvClient = new SecretClient(
-      process.env.KEY_VAULT_URL ||
-        "https://tasks-app-key-vault.vault.azure.net/",
+      process.env.KEY_VAULT_URL ?? "myurl",
       credential,
     );
-    const dbUrlSecret = await kvClient.getSecret("PG-CONNECTION-STRING");
+
+    const [dbUrlSecret, nextAuthUrl, nextAuthHashingSecret] = await Promise.all(
+      [
+        kvClient.getSecret("PG-CONNECTION-STRING"),
+        kvClient.getSecret("NEXTAUTH-URL"),
+        kvClient.getSecret("NEXTAUTH-SECRET"),
+      ],
+    );
+
     connectionString = dbUrlSecret.value;
-
-    // Map env variables needed for authentication and hashing (url, hasing key)
-    const nextAuthUrl = await kvClient.getSecret("NEXTAUTH-URL");
     process.env.NEXTAUTH_URL = nextAuthUrl.value;
-    const nextAuthHasingSecret = await kvClient.getSecret("NEXTAUTH-SECRET");
-    process.env.NEXTAUTH_SECRET = nextAuthHasingSecret.value;
-
+    process.env.NEXTAUTH_SECRET = nextAuthHashingSecret.value;
     console.log("✅ Retrieved all needed secrets.");
   }
 
-  dbInstance = drizzle({
-    connection: {
-      connectionString,
-    },
-  });
-
+  dbInstance = drizzle({ connection: { connectionString } });
   return dbInstance;
 }
 
-export const db = await initDb();
+// ✅ Export a lazy getter — nothing runs until you call getdb()
+export async function getdb() {
+  return initDb();
+}
