@@ -35,10 +35,9 @@ jobs:
         run: |
           # Package only what's needed to run the app
           mkdir -p deploy-package
-          cp -r .next deploy-package/
-          cp -r public deploy-package/ 2>/dev/null || :  # Copy if exists
-          cp package*.json deploy-package/
-          cp next.config.* deploy-package/ 2>/dev/null || :
+          cp -r .next/standalone/. deploy-package/.next/standalone
+          cp -r .next/static deploy-package/.next/static
+          cp -r public deploy-package/public 2>/dev/null || :  # Copy if exists
 
           # Create tarball for efficient transfer
           tar -czf deploy.tar.gz -C deploy-package .
@@ -65,11 +64,7 @@ jobs:
             cd /var/www/tasks-management-app
             tar -xzf /home/deploymentuser/deploy.tar.gz
 
-            # Install production dependencies only (much lighter)
-            npm ci --inlcude=dev --ignore-scripts
-
-            # Restart with PM2 (install pm2 first if needed: npm install -g pm2)
-            # OLD: pm2 restart tasks-management-app || pm2 start npm --name "tasks-management-app" -- start
+            # Restart with PM2
             pm2 reload ecosystem.config.js --update-env
 
             # Clean up
