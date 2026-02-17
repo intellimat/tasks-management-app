@@ -15,7 +15,7 @@ export default function LoginPage() {
     // const response =
     await signIn("credentials", {
       ...userAuth,
-      redirect: false,
+      redirect: true,
     });
 
     // if (response?.ok) {
