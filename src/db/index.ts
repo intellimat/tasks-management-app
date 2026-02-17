@@ -10,9 +10,7 @@ let dbInstance:
 async function initDb() {
   if (dbInstance) return dbInstance;
 
-  let connectionString: string | undefined;
-
-  connectionString = process.env.APP_DATABASE_URL;
+  const connectionString = process.env.APP_DATABASE_URL;
   if (!connectionString) {
     throw new Error("APP_DATABASE_URL is missing in your environment!");
   }
