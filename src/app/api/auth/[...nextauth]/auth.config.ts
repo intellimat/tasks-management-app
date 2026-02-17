@@ -4,10 +4,6 @@ import { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { _fetchUserByEmail } from "@/db/dao/users";
 
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET missing in your .env file!");
-}
-
 const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -29,7 +25,7 @@ const authConfig: NextAuthOptions = {
 
         const isPasswordValid = await compare(
           credentials.password,
-          user.passwordHash
+          user.passwordHash,
         );
 
         if (!isPasswordValid) {
