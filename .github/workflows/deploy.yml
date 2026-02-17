@@ -25,12 +25,12 @@ jobs:
       - name: Build Next.js application
         run: npm run build
         #env:
-          # If you need build-time env vars (like public API URLs), add them here
-          # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          # NODE_ENV: production
-          # KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
-          # NEXTAUTH_SECRET: "build-time-placeholder"
-          # NEXTAUTH_URL: "build-time-placeholder"
+        # If you need build-time env vars (like public API URLs), add them here
+        # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        # NODE_ENV: production
+        # KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
+        # NEXTAUTH_SECRET: "build-time-placeholder"
+        # NEXTAUTH_URL: "build-time-placeholder"
 
       - name: Create deployment package
         run: |
@@ -68,7 +68,8 @@ jobs:
             cd /var/www/tasks-management-app
             tar -xzf /home/deploymentuser/deploy.tar.gz
 
-            npm i
+            npm install @azure/identity
+            npm install @azure/keyvault-secrets
 
             # Restart with PM2
             pm2 reload ecosystem.config.js --update-env
