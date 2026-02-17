@@ -16,8 +16,9 @@ export default function SignupPage() {
       const signInResponse = await signIn("credentials", {
         ...userAuth,
         redirect: false,
+        callbackUrl: "/dashboard",
       });
-      if (signInResponse?.ok) {
+      if (signInResponse?.ok && signInResponse?.url) {
         router.push("/dashboard");
       } else {
         toast.error(signInResponse?.error);
