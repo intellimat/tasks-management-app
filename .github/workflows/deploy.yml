@@ -20,7 +20,7 @@ jobs:
         #   cache: "npm" # Caches npm dependencies for faster builds
 
       - name: Install dependencies
-        run: npm ci --inlcude=dev # "ci" is faster and more reliable than "install" for CI/CD
+        run: npm ci
 
       - name: Build Next.js application
         run: npm run build

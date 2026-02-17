@@ -2,6 +2,8 @@
 const { DefaultAzureCredential } = require("@azure/identity");
 const { SecretClient } = require("@azure/keyvault-secrets");
 
+console.log("process.env.NODE_ENV is: ", process.env.NODE_ENV);
+
 async function loadSecrets() {
   // Only works when run from an Azure managed identity.
   if (process.env.NODE_ENV !== "production") return;

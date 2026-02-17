@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname),
   },
   outputFileTracingIncludes: {
-    "/*": ["./node_modules/@azure/**"],
+    "/*": ["./node_modules/@azure/**", "./node_modules/tslib/**"],
   },
 };
 
