@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
-import { db } from "..";
+import { getdb } from "..";
 import { comments } from "../schema/comments";
 import { users } from "../schema/users";
 import { CommentFormData, Id } from "@/types/zod";
 
 export async function fetchComments(taskId: number) {
+  const db = await getdb();
   const rows = await db
     .select({
       id: comments.id,
@@ -30,6 +31,7 @@ export async function fetchComments(taskId: number) {
 }
 
 export async function deleteCommentById(commentId: number) {
+  const db = await getdb();
   const [deletedComment] = await db
     .delete(comments)
     .where(eq(comments.id, commentId))
@@ -44,8 +46,9 @@ export async function deleteCommentById(commentId: number) {
 
 export async function updateComment(
   commentId: number,
-  comment: CommentFormData
+  comment: CommentFormData,
 ) {
+  const db = await getdb();
   const [udpatedComment] = await db
     .update(comments)
     .set({ content: comment.content })
@@ -63,8 +66,9 @@ export async function addComment(
   comment: CommentFormData & {
     taskId: Id;
     authorId: Id;
-  }
+  },
 ) {
+  const db = await getdb();
   const [insertedComment] = await db
     .insert(comments)
     .values(comment)
