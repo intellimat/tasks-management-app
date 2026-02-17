@@ -1,10 +1,11 @@
-import { db } from "..";
+import { getdb } from "..";
 import { tasks } from "../schema/tasks";
 import { users } from "../schema/users";
 import { eq } from "drizzle-orm";
 import { TaskFormData } from "@/types/zod";
 
 export async function fetchTasks() {
+  const db = await getdb();
   const rows = await db
     .select({
       taskId: tasks.id,
@@ -37,6 +38,7 @@ export async function fetchTasks() {
 }
 
 export async function fetchTaskById(taskId: number) {
+  const db = await getdb();
   const rows = await db
     .select({
       taskId: tasks.id,
@@ -76,8 +78,9 @@ export async function fetchTaskById(taskId: number) {
 
 export async function insertTask(
   task: TaskFormData,
-  { email, userId }: { email: string; userId: number }
+  { email, userId }: { email: string; userId: number },
 ) {
+  const db = await getdb();
   const [newTask] = await db
     .insert(tasks)
     .values({
@@ -103,6 +106,7 @@ export async function insertTask(
 }
 
 export async function deleteTask(taskId: number) {
+  const db = await getdb();
   const [deletedTask] = await db
     .delete(tasks)
     .where(eq(tasks.id, taskId))
@@ -115,6 +119,7 @@ export async function deleteTask(taskId: number) {
 }
 
 export async function updateTask(taskId: number, task: TaskFormData) {
+  const db = await getdb();
   const [updatedTask] = await db
     .update(tasks)
     .set(task)

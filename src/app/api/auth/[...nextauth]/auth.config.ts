@@ -4,10 +4,6 @@ import { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { _fetchUserByEmail } from "@/db/dao/users";
 
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET missing in your .env file!");
-}
-
 const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -29,7 +25,7 @@ const authConfig: NextAuthOptions = {
 
         const isPasswordValid = await compare(
           credentials.password,
-          user.passwordHash
+          user.passwordHash,
         );
 
         if (!isPasswordValid) {
@@ -48,6 +44,20 @@ const authConfig: NextAuthOptions = {
     maxAge: 43200, // 12 hours: 12*60*60=43200
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow redirects to same origin
+      if (new URL(url).origin === baseUrl) return url;
+      // Default fallback
+      return baseUrl;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
         session.user.id = token.sub; // Add user ID to session from JWT

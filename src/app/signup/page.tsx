@@ -3,25 +3,18 @@ import UserAuthForm from "@/components/userAuthForm";
 import { UserAuth } from "@/types/zod";
 import { signupNewUser } from "@/services/signup";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
-  const router = useRouter();
   const handleSignUpFormSubmission = async (userAuth: UserAuth) => {
     try {
       const { email } = await signupNewUser(userAuth.email, userAuth.password);
       toast.success(`User ${email} added successfully!`);
-      toast.info("Loggin in...");
-      const signInResponse = await signIn("credentials", {
+      await signIn("credentials", {
         ...userAuth,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/dashboard",
       });
-      if (signInResponse?.ok) {
-        router.push("/dashboard");
-      } else {
-        toast.error(signInResponse?.error);
-      }
     } catch (error) {
       console.error(error);
       toast.error("User could not be added. ");
