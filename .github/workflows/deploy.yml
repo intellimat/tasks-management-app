@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Next.js application
         run: npm run build
-        env:
+        #env:
           # If you need build-time env vars (like public API URLs), add them here
           # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           # NODE_ENV: production
