@@ -34,10 +34,11 @@ jobs:
       - name: Create deployment package
         run: |
           # Package only what's needed to run the app
-          mkdir -p deploy-package
-          cp -r .next/standalone/. deploy-package/.next/standalone
+          mkdir -p deploy-package/.next/static    # ← creates the full path in one shot
+
+          cp -r .next/standalone/. deploy-package/
           cp -r .next/static deploy-package/.next/static
-          cp -r public deploy-package/public 2>/dev/null || :  # Copy if exists
+          cp -r public deploy-package/public 2>/dev/null || :
 
           # Create tarball for efficient transfer
           tar -czf deploy.tar.gz -C deploy-package .
