@@ -24,24 +24,23 @@ jobs:
 
       - name: Build Next.js application
         run: npm run build
-        #env:
-        # If you need build-time env vars (like public API URLs), add them here
-        # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-        # NODE_ENV: production
-        # KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
-        # NEXTAUTH_SECRET: "build-time-placeholder"
-        # NEXTAUTH_URL: "build-time-placeholder"
+        env:
+          # If you need build-time env vars (like public API URLs), add them here
+          # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NODE_ENV: production
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          APP_DATABASE_URL: ${{ secrets.APP_DATABASE_URL }}
 
       - name: Create deployment package
         run: |
           # Package only what's needed to run the app
-          mkdir -p deploy-package/.next/static
-          mkdir -p deploy-package/public
+          mkdir deploy-package
 
-          cp -r .next/standalone/. deploy-package/
-          cp -r .next/static/. deploy-package/.next/static
-          cp -r public/. deploy-package/public 2>/dev/null || :
-          cp start.js deploy-package/
+          cp -r .next deploy-package/
+          cp -r public deploy-package/
+          cp -r node_modules deploy-package/
+          cp package.json deploy-package/
 
           # Create tarball for efficient transfer
           tar -czf deploy.tar.gz -C deploy-package .
@@ -67,9 +66,6 @@ jobs:
             # Extract to app directory
             cd /var/www/tasks-management-app
             tar -xzf /home/deploymentuser/deploy.tar.gz
-
-            npm install @azure/identity
-            npm install @azure/keyvault-secrets
 
             # Restart with PM2
             pm2 reload ecosystem.config.js --update-env
