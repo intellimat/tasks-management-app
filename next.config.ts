@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  outputFileTracingIncludes: {
+    "/*": ["./node_modules/@azure/**"],
+  },
 };
 
 export default nextConfig;
