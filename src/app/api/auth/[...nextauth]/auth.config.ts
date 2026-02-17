@@ -44,6 +44,12 @@ const authConfig: NextAuthOptions = {
     maxAge: 43200, // 12 hours: 12*60*60=43200
   },
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
         session.user.id = token.sub; // Add user ID to session from JWT
