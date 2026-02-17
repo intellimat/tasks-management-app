@@ -27,19 +27,20 @@ jobs:
         env:
           # If you need build-time env vars (like public API URLs), add them here
           # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NODE_ENV: production
-          KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
-          NEXTAUTH_SECRET: "build-time-placeholder"
-          NEXTAUTH_URL: "build-time-placeholder"
+          # NODE_ENV: production
+          # KEY_VAULT_URL: ${{ secrets.KEY_VAULT_URL }}
+          # NEXTAUTH_SECRET: "build-time-placeholder"
+          # NEXTAUTH_URL: "build-time-placeholder"
 
       - name: Create deployment package
         run: |
           # Package only what's needed to run the app
-          mkdir -p deploy-package/.next/static    # ← creates the full path in one shot
+          mkdir -p deploy-package/.next/static
+          mkdir -p deploy-package/public
 
           cp -r .next/standalone/. deploy-package/
-          cp -r .next/static deploy-package/.next/static
-          cp -r public deploy-package/public 2>/dev/null || :
+          cp -r .next/static/. deploy-package/.next/static
+          cp -r public/. deploy-package/public 2>/dev/null || :
           cp start.js deploy-package/
 
           # Create tarball for efficient transfer
@@ -65,7 +66,10 @@ jobs:
           script: |
             # Extract to app directory
             cd /var/www/tasks-management-app
+            rm !(ecosystem.config.js) -R
             tar -xzf /home/deploymentuser/deploy.tar.gz
+
+            npm i
 
             # Restart with PM2
             pm2 reload ecosystem.config.js --update-env
