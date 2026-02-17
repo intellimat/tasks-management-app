@@ -25,7 +25,7 @@ async function initDb() {
   }
   // PRODUCTION: Use AzureKey Vault
   else {
-    console.log("Fetching connection string from Azure key vault. ");
+    console.log("⏳ Fetching secrets from Azure key vault. ");
     const credential = new DefaultAzureCredential();
     const kvClient = new SecretClient(
       process.env.KEY_VAULT_URL ||
@@ -35,11 +35,13 @@ async function initDb() {
     const dbUrlSecret = await kvClient.getSecret("PG-CONNECTION-STRING");
     connectionString = dbUrlSecret.value;
 
-    // Map env variables needed for authenticatoin and hashing (url, hasing key)
+    // Map env variables needed for authentication and hashing (url, hasing key)
     const nextAuthUrl = await kvClient.getSecret("NEXTAUTH-URL");
     process.env.NEXTAUTH_URL = nextAuthUrl.value;
     const nextAuthHasingSecret = await kvClient.getSecret("NEXTAUTH-SECRET");
     process.env.NEXTAUTH_SECRET = nextAuthHasingSecret.value;
+
+    console.log("✅ Retrieved all needed secrets.");
   }
 
   dbInstance = drizzle({

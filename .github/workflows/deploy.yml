@@ -1,0 +1,74 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master # Triggers only on pushes to master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24" # Adjust to your Node version
+        #   cache: "npm" # Caches npm dependencies for faster builds
+
+      - name: Install dependencies
+        run: npm ci # "ci" is faster and more reliable than "install" for CI/CD
+
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          # If you need build-time env vars (like public API URLs), add them here
+          # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NODE_ENV: production
+
+      - name: Create deployment package
+        run: |
+          # Package only what's needed to run the app
+          mkdir -p deploy-package
+          cp -r .next deploy-package/
+          cp -r public deploy-package/ 2>/dev/null || :  # Copy if exists
+          cp package*.json deploy-package/
+          cp next.config.* deploy-package/ 2>/dev/null || :
+
+          # Create tarball for efficient transfer
+          tar -czf deploy.tar.gz -C deploy-package .
+
+      - name: Deploy to Azure VM
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "deploy.tar.gz"
+          target: "/home/deploymentuser/"
+
+      - name: Extract and restart application
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            # Extract to app directory
+            cd /var/www/tasks-management-app
+            tar -xzf /home/deploymentuser/deploy.tar.gz
+
+            # Install production dependencies only (much lighter)
+            npm ci --omit=dev --ignore-scripts
+
+            # Restart with PM2 (install pm2 first if needed: npm install -g pm2)
+            # OLD: pm2 restart tasks-management-app || pm2 start npm --name "tasks-management-app" -- start
+            pm2 reload ecosystem.config.js --update-env
+
+            # Clean up
+            rm /home/deploymentuser/deploy.tar.gz
