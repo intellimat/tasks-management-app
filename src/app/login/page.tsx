@@ -14,7 +14,7 @@ export default function LoginPage() {
   async function handleLoginFormSubmission(userAuth: UserAuth) {
     const response = await signIn("credentials", {
       ...userAuth,
-      redirect: true,
+      redirect: false,
       callbackUrl: "/dashboard",
     });
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
       toast.success("Login successful!");
       setIsRedirecting(true);
       if (response.url) {
-        router.push(response.url);
+        router.replace(response.url);
       }
     } else if (response?.status === 401) {
       toast.error("Wrong credentials. ");

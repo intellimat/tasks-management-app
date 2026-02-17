@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { Session } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
+import { useSWRConfig } from "swr";
 
 interface NavbarProps {
   session?: Session | null;
@@ -13,10 +14,15 @@ interface NavbarProps {
   className?: string;
 }
 const Navbar: React.FC<NavbarProps> = ({ title, className = "" }) => {
+  const { cache } = useSWRConfig();
   const session = useSession();
   const email = session.data?.user?.email;
 
   const handleLogoutButtonClick = async () => {
+    // clear all SWR cache
+    for (const key of cache.keys()) {
+      cache.delete(key);
+    }
     await signOut({ callbackUrl: "/" });
   };
 
@@ -24,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, className = "" }) => {
     <nav
       className={cn(
         "flex items-center justify-between p-4 bg-white shadow-md",
-        className
+        className,
       )}
     >
       {title && (
