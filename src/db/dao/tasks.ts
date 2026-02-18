@@ -1,10 +1,10 @@
 import { getdb } from "..";
 import { tasks } from "../schema/tasks";
 import { users } from "../schema/users";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { TaskFormData } from "@/types/zod";
 
-export async function fetchTasks() {
+export async function fetchTasks(userId: number) {
   const db = await getdb();
   const rows = await db
     .select({
@@ -18,7 +18,8 @@ export async function fetchTasks() {
       authorEmail: users.email,
     })
     .from(tasks)
-    .leftJoin(users, eq(tasks.authorId, users.id));
+    .leftJoin(users, eq(tasks.authorId, users.id))
+    .where(eq(tasks.authorId, userId)); // only this user's tasks
 
   // Shape the result as { ...taskFields, author: { ... } }
   const parsedTasks = rows.map((row) => ({
@@ -37,7 +38,7 @@ export async function fetchTasks() {
   return parsedTasks;
 }
 
-export async function fetchTaskById(taskId: number) {
+export async function fetchTaskById(taskId: number, userId: number) {
   const db = await getdb();
   const rows = await db
     .select({
@@ -52,7 +53,7 @@ export async function fetchTaskById(taskId: number) {
     })
     .from(tasks)
     .leftJoin(users, eq(tasks.authorId, users.id))
-    .where(eq(tasks.id, taskId))
+    .where(and(eq(tasks.id, taskId), eq(tasks.authorId, userId)))
     .limit(1);
 
   if (rows.length === 0) {
@@ -105,11 +106,11 @@ export async function insertTask(
   return enrichedTask;
 }
 
-export async function deleteTask(taskId: number) {
+export async function deleteTask(taskId: number, userId: number) {
   const db = await getdb();
   const [deletedTask] = await db
     .delete(tasks)
-    .where(eq(tasks.id, taskId))
+    .where(and(eq(tasks.id, taskId), eq(tasks.authorId, userId)))
     .returning();
 
   if (!deletedTask) {
@@ -118,12 +119,16 @@ export async function deleteTask(taskId: number) {
   return deletedTask;
 }
 
-export async function updateTask(taskId: number, task: TaskFormData) {
+export async function updateTask(
+  taskId: number,
+  task: TaskFormData,
+  userId: number,
+) {
   const db = await getdb();
   const [updatedTask] = await db
     .update(tasks)
     .set(task)
-    .where(eq(tasks.id, taskId))
+    .where(and(eq(tasks.id, taskId), eq(tasks.authorId, userId)))
     .returning();
 
   if (!updatedTask) {

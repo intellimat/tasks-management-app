@@ -1,16 +1,20 @@
-import authConfig from "@/app/api/auth/[...nextauth]/auth.config";
 import { addComment, fetchComments } from "@/db/dao/comments";
 import { fetchTaskById } from "@/db/dao/tasks";
 import { idValidator, commentInputValidator } from "@/types/zod";
 import { getServerSession } from "next-auth";
+import authConfig from "@/app/api/auth/[...nextauth]/auth.config";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/tasks/:taskId/comments — fetch all task comments
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const session = await getServerSession(authConfig);
+    if (!session || !session.user.email || !session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { id } = await params;
 
     const parsedTaskId = idValidator.safeParse(Number(id));
@@ -21,27 +25,33 @@ export async function GET(
           error: "Invalid taskId",
           details: { receivedTaskId: id },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const fetchedCommentsFromDB = await fetchComments(parsedTaskId.data);
+    const fetchedCommentsFromDB = await fetchComments(
+      parsedTaskId.data,
+      Number(session.user.id),
+    );
     return NextResponse.json(fetchedCommentsFromDB);
   } catch (error) {
     console.error(`GET /api/tasks/:taskId/comments error: `, error);
     return NextResponse.json(
       { error: "Failed to fetch comments. " },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authConfig);
+    if (!session || !session.user.email || !session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
 
     // Get taskId and authorId to inject in new comment.
@@ -86,7 +96,10 @@ export async function POST(
       });
     }
 
-    const fetchedTaskFromDB = await fetchTaskById(parsedTaskId.data);
+    const fetchedTaskFromDB = await fetchTaskById(
+      parsedTaskId.data,
+      Number(session.user.id),
+    );
 
     if (fetchedTaskFromDB === null) {
       console.error("Task not found");
@@ -115,7 +128,7 @@ export async function POST(
     console.error(`POST /api/tasks/:taskId/comments error: `, error);
     return NextResponse.json(
       { error: "Failed to add comment" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

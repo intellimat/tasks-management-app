@@ -10,7 +10,7 @@ import useSWR from "swr";
 
 const useTasks = (
   setIsAddTaskDialogOpen: (open: boolean) => void,
-  searchWord: string
+  searchWord: string,
 ) => {
   const router = useRouter();
   const {
@@ -59,7 +59,7 @@ const useTasks = (
       const { deletedTask } = await deleteTask(task.id);
       await mutate(
         (currentTasks = []) => currentTasks.filter((_t) => _t.id !== task.id),
-        false
+        false,
       );
       toast.success(`Task "${deletedTask.title}" was successfully deleted!`);
     } catch (error) {
@@ -81,7 +81,7 @@ const useTasks = (
       const createdTask = await createTask(data);
       await mutate(
         (currentTasks = []) => [...currentTasks, createdTask],
-        false
+        false,
       ); // Default currentTasks to [] if undefined
 
       toast.success(`Task "${createdTask.title}" was successfully created!`);

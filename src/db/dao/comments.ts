@@ -1,10 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getdb } from "..";
 import { comments } from "../schema/comments";
 import { users } from "../schema/users";
 import { CommentFormData, Id } from "@/types/zod";
 
-export async function fetchComments(taskId: number) {
+export async function fetchComments(taskId: number, userId: number) {
   const db = await getdb();
   const rows = await db
     .select({
@@ -16,7 +16,7 @@ export async function fetchComments(taskId: number) {
       authorEmail: users.email,
     })
     .from(comments)
-    .where(eq(comments.taskId, taskId))
+    .where(and(eq(comments.taskId, taskId), eq(comments.authorId, userId)))
     .leftJoin(users, eq(comments.authorId, users.id));
 
   const parsedComments = rows.map((row) => ({
@@ -30,11 +30,11 @@ export async function fetchComments(taskId: number) {
   return parsedComments;
 }
 
-export async function deleteCommentById(commentId: number) {
+export async function deleteCommentById(commentId: number, userId: number) {
   const db = await getdb();
   const [deletedComment] = await db
     .delete(comments)
-    .where(eq(comments.id, commentId))
+    .where(and(eq(comments.id, commentId), eq(comments.authorId, userId)))
     .returning();
 
   if (!deletedComment) {
@@ -47,12 +47,13 @@ export async function deleteCommentById(commentId: number) {
 export async function updateComment(
   commentId: number,
   comment: CommentFormData,
+  userId: number,
 ) {
   const db = await getdb();
   const [udpatedComment] = await db
     .update(comments)
     .set({ content: comment.content })
-    .where(eq(comments.id, commentId))
+    .where(and(eq(comments.id, commentId), eq(comments.authorId, userId)))
     .returning();
 
   if (!udpatedComment) {

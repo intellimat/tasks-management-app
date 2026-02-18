@@ -14,15 +14,17 @@ interface NavbarProps {
   className?: string;
 }
 const Navbar: React.FC<NavbarProps> = ({ title, className = "" }) => {
-  const { cache } = useSWRConfig();
+  const { mutate } = useSWRConfig();
   const session = useSession();
   const email = session.data?.user?.email;
 
   const handleLogoutButtonClick = async () => {
     // clear all SWR cache
-    for (const key of cache.keys()) {
-      cache.delete(key);
-    }
+    await mutate(
+      () => true, // which cache keys are updated
+      undefined, // update cache data to `undefined`
+      { revalidate: false }, // do not revalidate
+    );
     await signOut({ callbackUrl: "/" });
   };
 
