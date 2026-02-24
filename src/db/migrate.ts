@@ -4,7 +4,7 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 
-const myEnv = dotenv.config({ path: ".env.development.local" }); // can be []
+const myEnv = dotenv.config({ path: ".env" }); // can be []
 dotenvExpand.expand(myEnv);
 
 const runMigrations = async () => {
