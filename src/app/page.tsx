@@ -11,7 +11,7 @@ export default function Home() {
       </h1>
       <div className="md:mx-42 flex flex-col items-center gap-4 m-3 md:mt-6">
         <p className="p-0 text-xl">
-          Stay organized with our Tasks Management App. Create, update, and
+          Stay organized with Tasks Management App. Create, update, and
           track tasks easily from a clean and intuitive dashboard. Share your
           work. Sign up securely and manage your work from anywhere.
           <br /> Perfect for personal goals, school, or work.

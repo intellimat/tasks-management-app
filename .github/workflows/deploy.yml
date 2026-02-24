@@ -74,3 +74,17 @@ jobs:
 
             # Clean up
             rm /home/deploymentuser/deploy.tar.gz
+      - name: Trigger Azure Function for storing deployment information
+        run: |
+          curl --location '${{ secrets.AZ_FUNCTION_URL }}' \
+          --header 'x-functions-key: ${{ secrets.AZ_FUNCTION_KEY }}' \
+          --header 'Content-Type: application/json' \
+          --data '{
+              "deployment_info": {
+                  "deployedAt": "${{ github.event.head_commit.timestamp }}",
+                  "commitSha": "${{ github.sha }}",
+                  "commitMessage": "${{ github.event.head_commit.message }}",
+                  "branch": "${{ github.ref_name }}",
+                  "author": "${{ github.event.head_commit.author.name }}"
+              }
+          }'
