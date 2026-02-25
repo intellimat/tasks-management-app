@@ -48,7 +48,14 @@ The workflow:
  - PM2 re-runs the app service
  - triggers an Azure function for storing deployment information
 
-Note: the application receives traffic from an nginx web server, which acts as a proxy.
+### Nginx (proxy) & PM2
+The VM has been configured to automatically start two systemd services on boot: *nginx* and *PM2*.
+
+Nginx is responsible for forwarding traffic to the Next.js application, which runs on a local port.  
+SSL certificate was provided with *Let's Encrypt* (Certbot) and set up in nginx configuration file. Certbot automatically handles certificate auto-renawals.  
+A rate limit has also been configured on nginx to protect the app from traffic spikes.
+
+On the other hand, PM2 manages the lifecycle of the Next.js  application on the Virtual machine.
 
 ## Run the app locally (with Docker)
 
