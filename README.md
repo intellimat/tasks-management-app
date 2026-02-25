@@ -41,17 +41,17 @@ The HTTP triggered Azure function code is available at: [Azure Function reposito
 ### Github actions workflow
 A _deploy.yml_ automates building and deploying the app on a Virtual Machine instance in the cloud. 
 The workflow:
- - is run on every push commit on the master branch
- - builds the app and package it in a compressed archive
- - the archive is shipped to a Linux VM through an SSH session
- - the archive is extracted on the Linux VM
- - PM2 re-runs the app service
- - triggers an Azure function for storing deployment information
+ - run on every push commit on the master branch
+ - build the app and package it in a compressed archive
+ - ship the archive to a Linux VM through an SSH session
+ - extract the archive on the Linux VM
+ - re-run PM2 the app service
+ - trigger an Azure function for storing deployment information
 
 ### Nginx (proxy) & PM2
 The VM has been configured to automatically start two systemd services on boot: *nginx* and *PM2*.
 
-Nginx is responsible for forwarding traffic to the Next.js application, which runs on a local port.  
+Nginx exposes HTTP (80) and HTTPS (443) ports and is responsible for forwarding traffic to the Next.js application, which runs on a local port.  
 SSL certificate was provided with *Let's Encrypt* (Certbot) and set up in nginx configuration file. Certbot automatically handles certificate auto-renawals.  
 A rate limit has also been configured on nginx to protect the app from traffic spikes.
 
@@ -163,3 +163,6 @@ The chosen port for running the database locally is 5432 but you can change it i
 
 ![Database Diagram](docs/ER_database.png)
 
+## Final considerations
+This project was created with the purpose to use Cloud services and understand more about their practicalities. Surely there are things that can be improved so I am open to receive any constructive feedback.
+Leave an anonymous feedback [here](https://docs.google.com/forms/d/e/1FAIpQLSfKtag-lHddvoo-RUK3GWZvUp5A17YVCT7PexUOR2kuMtLp2Q/viewform?usp=publish-editor).
