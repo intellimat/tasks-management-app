@@ -26,17 +26,37 @@ Main components:
  - Azure PostgreSQL flexible-server DB
  - General Purpose Storage Account for Function App management
 ### Observability
- - Application Insights for monitoring and troubleshooting App Function
- - Log Analytics Workspace for collecting and querying data
+ - Application Insights for monitoring and troubleshooting Next.js app and Function App
+ - Centralized Log Analytics Workspace for collecting and querying data
 ### Security
- - System-assigned Identities for accessing Postgres DB from the VM and User-assigned Identities for Storage Account access (with roles definitions)
+ - System-assigned managed identities for accessing Postgres DB from the VM and for Application Insights
+ - User-assigned managed identities for Storage Account access (with roles definitions)
+ - Role Assignments
  - Key Vault for handling secrets
 
 ### IaaC
-The infrastructure was provisioned by Bicep templates. You can see the the custom templates by visiting the following repository: [IaaC repository](https://github.com/intellimat/IaaC/tree/master/Azure_Bicep_Templates)
+The infrastructure was provisioned by Bicep templates. You can see some the the custom templates by visiting the following repository: [IaaC repository](https://github.com/intellimat/IaaC/tree/master/Azure_Bicep_Templates)
 
 ### Azure Function
 The HTTP triggered Azure function code is available at: [Azure Function repository](https://github.com/intellimat/Azure-Function-Test-Project)
+
+### More about Observability
+Metric alerts for the VM:
+- VM Availability (is VM up?)
+- CPU usage (>80%)
+- Memory (< 100MB available)
+- Disk IOPS (>95% consumed)
+- Network in/out thresholds
+
+Application Insights
+- an instance for the Function App
+- an instance for the Next.js App
+
+Both Application Insights instances ingest data into a single Log Analytics Workspace.
+
+A custom alert linked to the Next.js Application Insights instance was created to monitor failed requests.  
+The flow is:  
+Application Insights metric &rarr; Metric Alert Rule &rarr; Action Group &rarr; Email Notification
 
 ### Github actions workflow
 A _deploy.yml_ automates building and deploying the app on a Virtual Machine instance in the cloud. 
