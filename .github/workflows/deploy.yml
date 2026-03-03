@@ -88,3 +88,11 @@ jobs:
                   "author": "${{ github.event.head_commit.author.name }}"
               }
           }'
+      - name: Health Check After Deploy
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }})
+          if [ $HTTP_CODE -ne 200 ]; then
+            echo "❌ Health check failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+          echo "✅ Health check passed (HTTP $HTTP_CODE)"
