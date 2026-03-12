@@ -1,10 +1,12 @@
+# ⚠️**Status: DEPROVISIONED**
+> The app is not deployed on Azure anymore. 
+> Clone the repo and follow the setup instructions to run it locally.
 
 # Tasks Management App
 
-A portfolio project about architecting and deploying a full-stack application on Azure cloud.
-Available on: https://appvm-h7iclrjvocq2q.francecentral.cloudapp.azure.com
+A portfolio project about architecting and deploying a full-stack application ~~on Azure cloud~~.
 
-## Azure Deployment
+## ~~Azure Deployment~~
 The whole app is deployed on Azure using IaaS and PaaS. It was designed with a few key principles in mind:
  1. Minimize cost by leveraging free-tier resources and avoiding auto-scaling
  2. Avoid over-engineering
